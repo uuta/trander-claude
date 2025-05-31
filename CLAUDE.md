@@ -3,10 +3,24 @@
 
 ## Tech stack
 ### APIについて
-- Geoapify Places APIを使用します。 
-- categoriesはユーザーが選べるようにしたいです。
+- **現在地検索**: Geoapify Places APIを使用
+- **世界検索**: GeoDB Cities API + OpenStreetMap (Nominatim) APIを使用
+- categoriesはユーザーが選べるようにしました
+
+### API詳細
+1. **Geoapify Places API** - 現在地周辺の施設検索
 ```
-https://api.geoapify.com/v2/places?categories={categories}&filter=rect%3A10.716463143326969,48.755151258420966,10.835314015356737,48.680903341613316&limit=20&apiKey={apiKey}
+https://api.geoapify.com/v2/places?categories={categories}&filter=circle:{lon},{lat},{radius}&limit=50&apiKey={apiKey}
+```
+
+2. **GeoDB Cities API** - 世界の都市データ取得
+```
+https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds={countryCode}&minPopulation=100000&limit=10
+```
+
+3. **OpenStreetMap Nominatim API** - 住所・場所の詳細情報取得（無料）
+```
+https://nominatim.openstreetmap.org/search?format=json&q={query}&limit=10
 ```
 ## 機能
 ### 機能1: 現在地からのロケーション取得
@@ -23,14 +37,19 @@ https://api.geoapify.com/v2/places?categories={categories}&filter=rect%3A10.7164
    - Geoapify Places APIで周辺のホテル、商業施設、観光スポットなどを取得
    - 半径5km圏内で検索
 
-3. 最終的な返却データ
+3. 住所・詳細情報の補完
+   - OpenStreetMap Nominatim APIで詳細な住所情報を取得
+   - 完全無料、制限なし
+
+4. 最終的な返却データ
    - 都市情報（名称、国、人口、座標）
    - 施設情報（名称、種類、評価、住所、座標）
+   - 詳細住所情報（OpenStreetMapから取得）
 
 注意点：
-- GeoNames APIは登録必須（無料）
-- リクエスト制限への対応が必要
-- 施設検索にはGeoapify Places APIの利用と課金設定が必要
+- GeoDB Cities APIはRapidAPI経由で利用（月1,000リクエスト無料）
+- OpenStreetMap Nominatim APIは完全無料
+- 地図表示は行わず、テキスト情報のみで場所を提示
 ### 機能3: お気に入りに入れた場所の閲覧
 ```
 ```
@@ -40,5 +59,13 @@ https://api.geoapify.com/v2/places?categories={categories}&filter=rect%3A10.7164
 ## デザイン
 - UIは直感的で使いやすいデザインを心掛けましょう。
 - 基本はdarkmodeです。
-- 色使いのメインカラーはpinkで、 その補色である緑も併用し、視覚的な鮮やかさとバランスを保つことを目指しましょう。加えて、各ボタンや要素のレイア ウトはシンプルですがユニークな形状を持っており、ユーザーが容易に目的の機能を理解し利用できるよう設計します。地図を表示する必要はありません。ロケーション詳細情報はテキストと画像形式で提示しましょう。
-- その他の有益なリソースとして、アプリはユーザーの旅行計画や探検を助けるための関連情報、例えば、各ロケーションの天気情報、観光スポットの詳細、レストランやホテルのレビュー等を提供します。また、アプリは、ユーザーがロケーションを「お気に入り」 に登録したり、SNSやメールで友人と共有できる機能も備えています。
+- 色使いのメインカラーはpinkで、 その補色である緑も併用し、視覚的な鮮やかさとバランスを保つことを目指しましょう。
+- 各ボタンや要素のレイアウトはシンプルですがユニークな形状を持っており、ユーザーが容易に目的の機能を理解し利用できるよう設計します。
+- **地図表示は行わず**、ロケーション詳細情報はテキストと画像形式で提示しましょう。
+- OpenStreetMapから取得した詳細住所情報により、ユーザーは正確な位置情報を把握できます。
+- アプリは、ユーザーがロケーションを「お気に入り」に登録したり、SNSやメールで友人と共有できる機能も備えています。
+
+## API統合方針
+- **無料重視**: OpenStreetMap Nominatim APIを活用し、コストを最小化
+- **品質確保**: 複数APIの組み合わせで情報の充実を図る
+- **シンプル設計**: 地図表示なしでテキストベースの情報提示
