@@ -245,11 +245,12 @@ h1 {
     max-width: 250px;
 }
 
-.country-selector {
+.country-search {
     width: 100%;
+    position: relative;
 }
 
-.country-dropdown {
+.country-input {
     width: 100%;
     padding: 12px 20px;
     border: 2px solid #4caf50;
@@ -257,20 +258,54 @@ h1 {
     background: #2a2a2a;
     color: #e0e0e0;
     font-size: 1em;
-    cursor: pointer;
-    transition: all 0.3s ease;
     outline: none;
+    transition: all 0.3s ease;
 }
 
-.country-dropdown:focus {
+.country-input:focus {
     border-color: #e91e63;
     box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
 }
 
-.country-dropdown option {
+.country-input::placeholder {
+    color: #888;
+}
+
+.country-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     background: #2a2a2a;
+    border: 2px solid #404040;
+    border-top: none;
+    border-radius: 0 0 15px 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.country-suggestions.hidden {
+    display: none;
+}
+
+.country-suggestion {
+    padding: 12px 20px;
+    cursor: pointer;
     color: #e0e0e0;
-    padding: 10px;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #404040;
+}
+
+.country-suggestion:hover,
+.country-suggestion.highlighted {
+    background: #4caf50;
+    color: white;
+}
+
+.country-suggestion:last-child {
+    border-bottom: none;
 }
 
 .world-button {

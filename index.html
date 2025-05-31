@@ -114,10 +114,15 @@
             </div>
 
             <div id="world-search-options" class="search-options hidden">
-                <div class="country-selector">
-                    <select id="country-select" class="country-dropdown">
-                        <option value="">Select a country...</option>
-                    </select>
+                <div class="country-search">
+                    <input 
+                        type="text" 
+                        id="country-input" 
+                        class="country-input" 
+                        placeholder="Type country name..."
+                        autocomplete="off"
+                    >
+                    <div id="country-suggestions" class="country-suggestions hidden"></div>
                 </div>
                 <div class="welcome">
                     <p>Discover amazing places around the world!</p>

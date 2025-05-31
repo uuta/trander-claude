@@ -20,7 +20,8 @@ let currentLocation: GeoapifyPlace | null = null;
 let favorites: FavoritePlace[] = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 const discoverBtn = document.getElementById("discover-btn") as HTMLButtonElement;
-const countrySelect = document.getElementById("country-select") as HTMLSelectElement;
+const countryInput = document.getElementById("country-input") as HTMLInputElement;
+const countrySuggestions = document.getElementById("country-suggestions") as HTMLElement;
 const localModeBtn = document.getElementById("local-mode-btn") as HTMLButtonElement;
 const worldModeBtn = document.getElementById("world-mode-btn") as HTMLButtonElement;
 const localSearchOptions = document.getElementById("local-search-options") as HTMLElement;
@@ -38,7 +39,10 @@ const favoritesItems = document.getElementById("favorites-items") as HTMLUListEl
 discoverBtn.addEventListener("click", handleDiscoverClick);
 favoriteBtn.addEventListener("click", toggleFavorite);
 shareBtn.addEventListener("click", shareLocation);
-countrySelect.addEventListener("change", handleCountrySelection);
+countryInput.addEventListener("input", handleCountryInput);
+countryInput.addEventListener("focus", handleCountryFocus);
+countryInput.addEventListener("blur", handleCountryBlur);
+countryInput.addEventListener("keydown", handleCountryKeydown);
 localModeBtn.addEventListener("click", () => switchMode('local'));
 worldModeBtn.addEventListener("click", () => switchMode('world'));
 let categoryCheckboxes = document.querySelectorAll('.category-checkbox') as NodeListOf<HTMLInputElement>;
@@ -53,6 +57,9 @@ toggleDetailedBtn.addEventListener('click', toggleDetailedCategories);
 selectAllCheckbox.addEventListener('change', handleSelectAll);
 
 let currentMode: 'local' | 'world' = 'local';
+let selectedCountryCode: string = '';
+let highlightedIndex: number = -1;
+let filteredCountries: Country[] = [];
 
 function switchMode(mode: 'local' | 'world'): void {
   currentMode = mode;
@@ -73,7 +80,7 @@ function switchMode(mode: 'local' | 'world'): void {
     localSearchOptions.classList.add('hidden');
     discoverText.textContent = 'Discover Places';
     discoverIcon.textContent = '🔍';
-    discoverBtn.disabled = !countrySelect.value;
+    discoverBtn.disabled = !selectedCountryCode;
   }
 }
 
@@ -82,6 +89,111 @@ function handleDiscoverClick(): void {
     discoverNewLocation();
   } else {
     discoverWorldLocation();
+  }
+}
+
+function handleCountryInput(): void {
+  const query = countryInput.value.toLowerCase().trim();
+  
+  if (query.length === 0) {
+    countrySuggestions.classList.add('hidden');
+    selectedCountryCode = '';
+    updateDiscoverButton();
+    return;
+  }
+  
+  filteredCountries = POPULAR_COUNTRIES.filter(country => 
+    country.name.toLowerCase().includes(query)
+  );
+  
+  if (filteredCountries.length > 0) {
+    displayCountrySuggestions(filteredCountries);
+    highlightedIndex = -1;
+  } else {
+    countrySuggestions.classList.add('hidden');
+  }
+  
+  // Check for exact match
+  const exactMatch = POPULAR_COUNTRIES.find(country => 
+    country.name.toLowerCase() === query
+  );
+  
+  selectedCountryCode = exactMatch ? exactMatch.code : '';
+  updateDiscoverButton();
+}
+
+function handleCountryFocus(): void {
+  if (countryInput.value.trim() && filteredCountries.length > 0) {
+    countrySuggestions.classList.remove('hidden');
+  }
+}
+
+function handleCountryBlur(): void {
+  // Delay hiding to allow clicks on suggestions
+  setTimeout(() => {
+    countrySuggestions.classList.add('hidden');
+  }, 150);
+}
+
+function handleCountryKeydown(e: KeyboardEvent): void {
+  if (!filteredCountries.length) return;
+  
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      highlightedIndex = Math.min(highlightedIndex + 1, filteredCountries.length - 1);
+      updateHighlight();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      highlightedIndex = Math.max(highlightedIndex - 1, -1);
+      updateHighlight();
+      break;
+    case 'Enter':
+      e.preventDefault();
+      if (highlightedIndex >= 0) {
+        selectCountry(filteredCountries[highlightedIndex]);
+      }
+      break;
+    case 'Escape':
+      countrySuggestions.classList.add('hidden');
+      countryInput.blur();
+      break;
+  }
+}
+
+function displayCountrySuggestions(countries: Country[]): void {
+  countrySuggestions.innerHTML = '';
+  
+  countries.slice(0, 8).forEach((country, index) => {
+    const suggestion = document.createElement('div');
+    suggestion.className = 'country-suggestion';
+    suggestion.textContent = country.name;
+    suggestion.addEventListener('click', () => selectCountry(country));
+    countrySuggestions.appendChild(suggestion);
+  });
+  
+  countrySuggestions.classList.remove('hidden');
+}
+
+function updateHighlight(): void {
+  const suggestions = countrySuggestions.querySelectorAll('.country-suggestion');
+  suggestions.forEach((suggestion, index) => {
+    suggestion.classList.toggle('highlighted', index === highlightedIndex);
+  });
+}
+
+function selectCountry(country: Country): void {
+  countryInput.value = country.name;
+  selectedCountryCode = country.code;
+  countrySuggestions.classList.add('hidden');
+  highlightedIndex = -1;
+  updateDiscoverButton();
+}
+
+function updateDiscoverButton(): void {
+  if (currentMode === 'world') {
+    discoverBtn.disabled = !selectedCountryCode;
   }
 }
 
@@ -154,24 +266,15 @@ function init(): void {
 }
 
 function populateCountryDropdown(): void {
-  POPULAR_COUNTRIES.forEach(country => {
-    const option = document.createElement('option');
-    option.value = country.code;
-    option.textContent = country.name;
-    countrySelect.appendChild(option);
-  });
+  // No longer needed - countries are filtered from POPULAR_COUNTRIES array
 }
 
 function handleCountrySelection(): void {
-  const selectedCountry = countrySelect.value;
-  if (currentMode === 'world') {
-    discoverBtn.disabled = !selectedCountry;
-  }
+  // No longer needed - handled by updateDiscoverButton()
 }
 
 async function discoverWorldLocation(): Promise<void> {
-  const selectedCountry = countrySelect.value;
-  if (!selectedCountry) return;
+  if (!selectedCountryCode) return;
 
   try {
     errorMessage.classList.add("hidden");
@@ -179,7 +282,7 @@ async function discoverWorldLocation(): Promise<void> {
     discoverBtn.innerHTML =
       '<span class="button-text">Searching...</span> <span class="button-icon loading-spinner">◐</span>';
 
-    const worldData = await searchWorldLocation(selectedCountry);
+    const worldData = await searchWorldLocation(selectedCountryCode);
 
     if (worldData.places.length > 0) {
       const randomPlace = worldData.places[Math.floor(Math.random() * worldData.places.length)];
@@ -192,7 +295,7 @@ async function discoverWorldLocation(): Promise<void> {
     const errorMsg = error instanceof Error ? error.message : "An error occurred in worldwide search";
     showError(errorMsg);
   } finally {
-    discoverBtn.disabled = !countrySelect.value;
+    discoverBtn.disabled = !selectedCountryCode;
     discoverBtn.innerHTML =
       '<span class="button-text">Discover Places</span> <span class="button-icon">🔍</span>';
   }
