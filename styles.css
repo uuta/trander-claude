@@ -1,3 +1,15 @@
+/* 
+Trander - Subtle Dark Theme
+Color Palette:
+- Background: #0f0f0f (very dark)
+- Cards/Components: #1e293b (dark slate)
+- Borders: #334155 (slate)
+- Primary text: #f1f5f9 (near white)
+- Secondary text: #94a3b8 (light slate)
+- Accents: #64748b (medium slate)
+- Interactive: #475569 (darker slate)
+*/
+
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +18,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d1b3d 100%);
+    background: linear-gradient(135deg, #0f0f0f 0%, #1e293b 100%);
     min-height: 100vh;
     color: #e0e0e0;
 }
@@ -23,26 +35,27 @@ header {
 }
 
 h1 {
-    color: #e91e63;
+    color: #f8fafc;
     font-size: 3em;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-weight: 600;
 }
 
 .tagline {
-    color: #4caf50;
+    color: #94a3b8;
     font-size: 1.2em;
     font-weight: 300;
 }
 
 .location-card {
-    background: #2a2a2a;
+    background: #1e293b;
     border-radius: 20px;
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    margin: 30px 0;
     animation: slideIn 0.5s ease-out;
-    border: 1px solid #404040;
+    border: 1px solid #334155;
 }
 
 .location-card.hidden {
@@ -76,9 +89,10 @@ h1 {
 }
 
 .location-info h2 {
-    color: #e91e63;
+    color: #f1f5f9;
     font-size: 1.8em;
     margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .address {
@@ -87,7 +101,7 @@ h1 {
 }
 
 .distance {
-    color: #4caf50;
+    color: #64748b;
     font-weight: bold;
     margin-bottom: 15px;
 }
@@ -118,28 +132,28 @@ h1 {
 }
 
 #favorite-btn {
-    background: #2a2a2a;
-    color: #e91e63;
-    border: 2px solid #e91e63;
+    background: #1e293b;
+    color: #64748b;
+    border: 2px solid #64748b;
 }
 
 #favorite-btn:hover {
-    background: #e91e63;
+    background: #64748b;
     color: white;
 }
 
 #favorite-btn.active {
-    background: #e91e63;
+    background: #64748b;
     color: white;
 }
 
 #share-btn {
-    background: #4caf50;
+    background: #475569;
     color: white;
 }
 
 #share-btn:hover {
-    background: #388e3c;
+    background: #334155;
 }
 
 .icon {
@@ -154,24 +168,25 @@ h1 {
 }
 
 .search-mode-selector {
-    background: #2a2a2a;
+    background: #1e293b;
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 20px;
-    border: 1px solid #404040;
+    border: 1px solid #334155;
 }
 
 .search-mode-selector h3 {
-    color: #e91e63;
+    color: #f1f5f9;
     margin-bottom: 15px;
     font-size: 1.2em;
     text-align: center;
+    font-weight: 600;
 }
 
 .mode-tabs {
     display: flex;
     gap: 10px;
-    background: #1a1a1a;
+    background: #0f172a;
     border-radius: 10px;
     padding: 5px;
 }
@@ -180,7 +195,7 @@ h1 {
     flex: 1;
     padding: 12px 20px;
     background: transparent;
-    color: #b0b0b0;
+    color: #64748b;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -190,15 +205,16 @@ h1 {
     justify-content: center;
     gap: 8px;
     font-size: 0.9em;
+    font-weight: 500;
 }
 
 .mode-tab:hover {
-    background: #3a3a3a;
-    color: #e0e0e0;
+    background: #1e293b;
+    color: #94a3b8;
 }
 
 .mode-tab.active {
-    background: #e91e63;
+    background: #475569;
     color: white;
 }
 
@@ -224,15 +240,15 @@ h1 {
 /* Updated buttons - smaller size v2 */
 .discover-button {
     padding: 12px 20px;
-    background: #4caf50;
+    background: linear-gradient(135deg, #b41bbc 0%, #7c3aed 100%);
     color: white;
     border: none;
     border-radius: 20px;
     font-size: 1.0em;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 5px 20px rgba(180, 27, 188, 0.4);
     min-width: 160px;
 }
 
@@ -253,9 +269,9 @@ h1 {
 .country-input {
     width: 100%;
     padding: 12px 20px;
-    border: 2px solid #4caf50;
+    border: 2px solid #475569;
     border-radius: 25px;
-    background: #2a2a2a;
+    background: #1e293b;
     color: #e0e0e0;
     font-size: 1em;
     outline: none;
@@ -263,8 +279,8 @@ h1 {
 }
 
 .country-input:focus {
-    border-color: #e91e63;
-    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.2);
 }
 
 .country-input::placeholder {
@@ -276,14 +292,14 @@ h1 {
     top: 100%;
     left: 0;
     right: 0;
-    background: #2a2a2a;
-    border: 2px solid #404040;
+    background: #1e293b;
+    border: 2px solid #334155;
     border-top: none;
     border-radius: 0 0 15px 15px;
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .country-suggestions.hidden {
@@ -300,7 +316,7 @@ h1 {
 
 .country-suggestion:hover,
 .country-suggestion.highlighted {
-    background: #4caf50;
+    background: #64748b;
     color: white;
 }
 
@@ -308,15 +324,7 @@ h1 {
     border-bottom: none;
 }
 
-.world-button {
-    background: #4caf50;
-    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
-}
-
-.world-button:hover:not(:disabled) {
-    background: #388e3c;
-    box-shadow: 0 7px 25px rgba(76, 175, 80, 0.4);
-}
+/* Legacy world button styles - no longer used */
 
 .world-button:disabled {
     background: #666;
@@ -326,9 +334,9 @@ h1 {
 }
 
 .discover-button:hover {
-    background: #388e3c;
+    background: linear-gradient(135deg, #a21caf 0%, #6b21a8 100%);
     transform: translateY(-2px);
-    box-shadow: 0 7px 25px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 7px 25px rgba(180, 27, 188, 0.6);
 }
 
 .discover-button:active {
@@ -368,12 +376,12 @@ h1 {
 }
 
 .favorites {
-    background: #2a2a2a;
+    background: #1e293b;
     border-radius: 20px;
     padding: 20px;
     margin-top: 40px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    border: 1px solid #404040;
+    border: 1px solid #334155;
 }
 
 .favorites.hidden {
@@ -381,8 +389,9 @@ h1 {
 }
 
 .favorites h3 {
-    color: #e91e63;
+    color: #f1f5f9;
     margin-bottom: 15px;
+    font-weight: 600;
 }
 
 #favorites-items {
@@ -406,15 +415,15 @@ h1 {
 }
 
 .category-selection {
-    background: #2a2a2a;
+    background: #1e293b;
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 30px;
-    border: 1px solid #404040;
+    border: 1px solid #334155;
 }
 
 .category-header {
-    color: #e91e63;
+    color: #f1f5f9;
     margin-bottom: 10px;
     font-size: 1.2em;
     cursor: pointer;
@@ -423,10 +432,11 @@ h1 {
     align-items: center;
     user-select: none;
     transition: color 0.2s ease;
+    font-weight: 600;
 }
 
 .category-header:hover {
-    color: #d81b60;
+    color: #94a3b8;
 }
 
 .collapse-icon {
@@ -459,18 +469,18 @@ h1 {
 }
 
 .select-all-item {
-    background: #4caf50;
+    background: #64748b;
     color: white;
     margin-bottom: 10px;
     font-weight: bold;
 }
 
 .select-all-item:hover {
-    background: #388e3c;
+    background: #475569;
 }
 
 .category-status {
-    color: #4caf50;
+    color: #94a3b8;
     font-size: 0.9em;
     font-weight: bold;
     text-align: center;
@@ -499,13 +509,13 @@ h1 {
 }
 
 .category-item:has(input:checked) {
-    background: #e91e63;
-    border-color: #e91e63;
+    background: #64748b;
+    border-color: #64748b;
     color: white;
 }
 
 .category-checkbox {
-    accent-color: #e91e63;
+    accent-color: #64748b;
 }
 
 .category-item span {
@@ -516,10 +526,12 @@ h1 {
 .category-toggle {
     margin: 20px 0 15px 0;
     text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .toggle-btn {
-    background: #4caf50;
+    background: #64748b;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -527,10 +539,11 @@ h1 {
     cursor: pointer;
     font-size: 0.9em;
     transition: all 0.2s ease;
+    font-weight: 500;
 }
 
 .toggle-btn:hover {
-    background: #388e3c;
+    background: #475569;
 }
 
 .detailed-categories {
@@ -544,9 +557,10 @@ h1 {
 }
 
 .detailed-categories h4 {
-    color: #4caf50;
+    color: #94a3b8;
     margin-bottom: 15px;
     font-size: 1.1em;
+    font-weight: 600;
 }
 
 .detailed-grid {
