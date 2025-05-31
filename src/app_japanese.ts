@@ -57,10 +57,10 @@ function toggleDetailedCategories(): void {
   if (isHidden) {
     populateDetailedCategories();
     detailedCategories.classList.remove('hidden');
-    toggleDetailedBtn.textContent = 'Hide detailed categories';
+    toggleDetailedBtn.textContent = '詳細カテゴリを非表示';
   } else {
     detailedCategories.classList.add('hidden');
-    toggleDetailedBtn.textContent = 'Show detailed categories';
+    toggleDetailedBtn.textContent = '詳細カテゴリを表示';
   }
 }
 
@@ -117,7 +117,7 @@ async function discoverWorldLocation(): Promise<void> {
     errorMessage.classList.add("hidden");
     worldDiscoverBtn.disabled = true;
     worldDiscoverBtn.innerHTML =
-      '<span class="button-text">Searching...</span> <span class="button-icon loading-spinner">◐</span>';
+      '<span class="button-text">検索中...</span> <span class="button-icon loading-spinner">◐</span>';
 
     const worldData = await searchWorldLocation(selectedCountry);
 
@@ -125,16 +125,16 @@ async function discoverWorldLocation(): Promise<void> {
       const randomPlace = worldData.places[Math.floor(Math.random() * worldData.places.length)];
       displayWorldLocation(worldData, randomPlace);
     } else {
-      showError("No places found in this city area");
+      showError("この都市周辺に場所が見つかりませんでした。");
     }
   } catch (error) {
     console.error("Error in world location discovery:", error);
-    const errorMsg = error instanceof Error ? error.message : "An error occurred in worldwide search";
+    const errorMsg = error instanceof Error ? error.message : "世界検索でエラーが発生しました";
     showError(errorMsg);
   } finally {
     worldDiscoverBtn.disabled = false;
     worldDiscoverBtn.innerHTML =
-      '<span class="button-text">Search worldwide</span> <span class="button-icon">🌍</span>';
+      '<span class="button-text">世界から探す</span> <span class="button-icon">🌍</span>';
   }
 }
 
@@ -143,7 +143,7 @@ async function discoverNewLocation(): Promise<void> {
     errorMessage.classList.add("hidden");
     discoverBtn.disabled = true;
     discoverBtn.innerHTML =
-      '<span class="button-text">Searching...</span> <span class="button-icon loading-spinner">◐</span>';
+      '<span class="button-text">検索中...</span> <span class="button-icon loading-spinner">◐</span>';
 
     let lat: number, lon: number;
 
@@ -163,23 +163,23 @@ async function discoverNewLocation(): Promise<void> {
       const randomPlace = places[Math.floor(Math.random() * places.length)];
       displayLocation(randomPlace, lat, lon);
     } else {
-      showError("No places found nearby");
+      showError("周辺に場所が見つかりませんでした。");
     }
   } catch (error) {
     console.error("Error in discoverNewLocation:", error);
-    const errorMsg = error instanceof Error ? error.message : "An unknown error occurred";
+    const errorMsg = error instanceof Error ? error.message : "不明なエラーが発生しました";
     showError(errorMsg);
   } finally {
     discoverBtn.disabled = false;
     discoverBtn.innerHTML =
-      '<span class="button-text">Discover new place</span> <span class="button-icon">🎲</span>';
+      '<span class="button-text">新しい場所を探す</span> <span class="button-icon">🎲</span>';
   }
 }
 
 function getCurrentPosition(): Promise<Position> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error("Your browser does not support geolocation"));
+      reject(new Error("お使いのブラウザは位置情報をサポートしていません。"));
       return;
     }
 
@@ -189,17 +189,17 @@ function getCurrentPosition(): Promise<Position> {
       },
       (error) => {
         console.error("Geolocation error:", error);
-        let message = "Failed to get location information";
+        let message = "位置情報の取得に失敗しました。";
         switch (error.code) {
           case error.PERMISSION_DENIED:
             message =
-              "Location access denied. Please check your browser settings";
+              "位置情報の使用が許可されていません。ブラウザの設定を確認してください。";
             break;
           case error.POSITION_UNAVAILABLE:
-            message = "Location information is unavailable";
+            message = "位置情報が利用できません。";
             break;
           case error.TIMEOUT:
-            message = "Location request timed out";
+            message = "位置情報の取得がタイムアウトしました。";
             break;
         }
         reject(new Error(message));
@@ -221,7 +221,7 @@ async function searchNearbyPlaces(lat: number, lon: number, selectedCategories: 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API Error:", errorText);
-      throw new Error("Failed to search for places");
+      throw new Error("場所の検索に失敗しました。");
     }
 
     const data: GeoapifyResponse = await response.json();
@@ -248,20 +248,20 @@ function displayLocation(place: GeoapifyPlace, userLat: number, userLon: number)
   const locationDistanceEl = document.getElementById("location-distance") as HTMLElement;
   const locationDetailsEl = document.getElementById("location-details") as HTMLElement;
 
-  locationNameEl.textContent = properties.name || "Unknown name";
+  locationNameEl.textContent = properties.name || "名称不明";
   locationAddressEl.textContent = formatAddress(properties);
-  locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from your location`;
+  locationDistanceEl.textContent = `現在地から約 ${distance.toFixed(1)} km`;
 
   const details: string[] = [];
   if (properties.categories) {
-    details.push(`Category: ${formatCategories(properties.categories)}`);
+    details.push(`カテゴリ: ${formatCategories(properties.categories)}`);
   }
   if (properties.opening_hours) {
-    details.push(`Opening hours: ${properties.opening_hours}`);
+    details.push(`営業時間: ${properties.opening_hours}`);
   }
   if (properties.website) {
     details.push(
-      `<a href="${properties.website}" target="_blank" rel="noopener">Website</a>`,
+      `<a href="${properties.website}" target="_blank" rel="noopener">ウェブサイト</a>`,
     );
   }
   locationDetailsEl.innerHTML = details.join("<br>");
@@ -275,7 +275,7 @@ function displayLocation(place: GeoapifyPlace, userLat: number, userLon: number)
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
   } else {
     // Fallback to a default placeholder
-    imageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+    imageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWgtOaJgOeUu+WDjzwvdGV4dD48L3N2Zz4=';
   }
   
   const locationImage = document.getElementById("location-image") as HTMLImageElement;
@@ -283,7 +283,7 @@ function displayLocation(place: GeoapifyPlace, userLat: number, userLon: number)
   
   // Add error handling for image loading
   locationImage.onerror = function() {
-    (this as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+    (this as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWgtOaJgOeUu+WDjzwvdGV4dD48L3N2Zz4=';
   };
 
   const isFavorite = favorites.some(
@@ -312,22 +312,22 @@ function displayWorldLocation(worldData: WorldLocationData, place: GeoapifyPlace
   const locationDistanceEl = document.getElementById("location-distance") as HTMLElement;
   const locationDetailsEl = document.getElementById("location-details") as HTMLElement;
 
-  locationNameEl.textContent = properties.name || "Unknown name";
+  locationNameEl.textContent = properties.name || "名称不明";
   locationAddressEl.textContent = formatAddress(properties);
-  locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from ${city.name}, ${city.country}`;
+  locationDistanceEl.textContent = `${city.name}, ${city.country}から約 ${distance.toFixed(1)} km`;
 
   const details: string[] = [];
-  details.push(`🏙️ City: ${city.name}, ${city.country}`);
-  details.push(`👥 Population: ${city.population.toLocaleString()}`);
+  details.push(`🏙️ 都市: ${city.name}, ${city.country}`);
+  details.push(`👥 人口: ${city.population.toLocaleString()}人`);
   if (properties.categories) {
-    details.push(`📍 Category: ${formatCategories(properties.categories)}`);
+    details.push(`📍 カテゴリ: ${formatCategories(properties.categories)}`);
   }
   if (properties.opening_hours) {
-    details.push(`🕒 Opening hours: ${properties.opening_hours}`);
+    details.push(`🕒 営業時間: ${properties.opening_hours}`);
   }
   if (properties.website) {
     details.push(
-      `🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`,
+      `🌐 <a href="${properties.website}" target="_blank" rel="noopener">ウェブサイト</a>`,
     );
   }
   locationDetailsEl.innerHTML = details.join("<br>");
@@ -339,14 +339,14 @@ function displayWorldLocation(worldData: WorldLocationData, place: GeoapifyPlace
   } else if (properties.name) {
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
   } else {
-    imageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+    imageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWgtOaJgOeUu+WDjzwvdGV4dD48L3N2Zz4=';
   }
   
   const locationImage = document.getElementById("location-image") as HTMLImageElement;
   locationImage.src = imageUrl;
   
   locationImage.onerror = function() {
-    (this as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+    (this as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWgtOaJgOeUu+WDjzwvdGV4dD48L3N2Zz4=';
   };
 
   const isFavorite = favorites.some(
@@ -364,15 +364,15 @@ function formatAddress(properties: any): string {
   if (properties.city) parts.push(properties.city);
   if (properties.state) parts.push(properties.state);
   if (properties.country) parts.push(properties.country);
-  return parts.join(", ") || "Address unknown";
+  return parts.join(", ") || "住所不明";
 }
 
 function formatCategories(categories: string[]): string {
   const categoryMap: { [key: string]: string } = {
-    tourism: "Tourism",
-    entertainment: "Entertainment",
-    catering: "Dining",
-    "commercial.shopping": "Shopping",
+    tourism: "観光",
+    entertainment: "エンターテイメント",
+    catering: "飲食",
+    "commercial.shopping": "ショッピング",
   };
 
   return categories
@@ -408,7 +408,7 @@ function toggleFavorite(): void {
   if (favoriteIndex === -1) {
     favorites.push({
       place_id: properties.place_id,
-      name: properties.name || "Unknown name",
+      name: properties.name || "名称不明",
       address: formatAddress(properties),
     });
     favoriteBtn.classList.add("active");
@@ -442,15 +442,15 @@ function shareLocation(): void {
   if (!currentLocation) return;
 
   const properties = currentLocation.properties;
-  const text = `I found ${properties.name || "an amazing place"}!\n${formatAddress(properties)}`;
+  const text = `${properties.name || "素敵な場所"}を見つけました！\n${formatAddress(properties)}`;
 
   if (navigator.share) {
     navigator
       .share({
-        title: "Trander - Sharing Location",
+        title: "Trander - 場所の共有",
         text: text,
       })
-      .catch(() => console.log("Sharing was cancelled"));
+      .catch(() => console.log("共有がキャンセルされました"));
   } else {
     const dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
@@ -458,7 +458,7 @@ function shareLocation(): void {
     dummy.select();
     document.execCommand("copy");
     document.body.removeChild(dummy);
-    alert("Copied to clipboard!");
+    alert("クリップボードにコピーしました！");
   }
 }
 
@@ -481,72 +481,72 @@ async function getLocationByIP(): Promise<{ lat: number; lon: number }> {
   }
 }
 
-// Available categories with English labels
+// Available categories with Japanese labels
 const AVAILABLE_CATEGORIES: CategoryDefinition = {
-  'accommodation': 'Accommodation',
-  'accommodation.hotel': 'Hotel',
-  'accommodation.motel': 'Motel',
-  'accommodation.apartment': 'Apartment',
-  'accommodation.chalet': 'Chalet',
-  'accommodation.guest_house': 'Guest House',
-  'catering': 'Dining',
-  'catering.restaurant': 'Restaurant',
-  'catering.cafe': 'Cafe',
-  'catering.bar': 'Bar',
-  'catering.pub': 'Pub',
-  'catering.fast_food': 'Fast Food',
-  'catering.ice_cream': 'Ice Cream',
-  'catering.biergarten': 'Beer Garden',
-  'entertainment': 'Entertainment',
-  'entertainment.museum': 'Museum',
-  'entertainment.theatre': 'Theatre',
-  'entertainment.cinema': 'Cinema',
-  'entertainment.zoo': 'Zoo',
-  'entertainment.aquarium': 'Aquarium',
-  'entertainment.theme_park': 'Theme Park',
-  'entertainment.casino': 'Casino',
-  'entertainment.nightclub': 'Nightclub',
-  'tourism': 'Tourism',
-  'tourism.sights': 'Sights',
-  'tourism.attraction': 'Attraction',
-  'tourism.information': 'Tourist Information',
-  'commercial': 'Commercial',
-  'commercial.shopping_mall': 'Shopping Mall',
-  'commercial.supermarket': 'Supermarket',
-  'commercial.marketplace': 'Marketplace',
-  'commercial.department_store': 'Department Store',
-  'sport': 'Sports',
-  'sport.fitness': 'Fitness',
-  'sport.swimming': 'Swimming',
-  'sport.tennis': 'Tennis',
-  'sport.golf': 'Golf',
-  'sport.skiing': 'Skiing',
-  'natural': 'Nature',
-  'natural.beach': 'Beach',
-  'natural.park': 'Park',
-  'natural.forest': 'Forest',
-  'natural.mountain': 'Mountain',
-  'natural.lake': 'Lake',
-  'natural.river': 'River',
-  'service': 'Service',
-  'service.banking': 'Banking',
-  'service.healthcare': 'Healthcare',
-  'service.pharmacy': 'Pharmacy',
-  'service.post': 'Post Office',
-  'service.police': 'Police Station',
-  'service.fire_station': 'Fire Station',
-  'religion': 'Religious Sites',
-  'religion.christian': 'Christian',
-  'religion.buddhist': 'Buddhist',
-  'religion.hindu': 'Hindu',
-  'religion.jewish': 'Jewish',
-  'religion.muslim': 'Muslim',
-  'education': 'Education',
-  'education.school': 'School',
-  'education.university': 'University',
-  'education.college': 'College',
-  'education.kindergarten': 'Kindergarten',
-  'education.library': 'Library'
+  'accommodation': '宿泊施設',
+  'accommodation.hotel': 'ホテル',
+  'accommodation.motel': 'モーテル',
+  'accommodation.apartment': 'アパートメント',
+  'accommodation.chalet': 'シャレー',
+  'accommodation.guest_house': 'ゲストハウス',
+  'catering': '飲食',
+  'catering.restaurant': 'レストラン',
+  'catering.cafe': 'カフェ',
+  'catering.bar': 'バー',
+  'catering.pub': 'パブ',
+  'catering.fast_food': 'ファストフード',
+  'catering.ice_cream': 'アイスクリーム',
+  'catering.biergarten': 'ビアガーデン',
+  'entertainment': 'エンターテイメント',
+  'entertainment.museum': '美術館・博物館',
+  'entertainment.theatre': '劇場',
+  'entertainment.cinema': '映画館',
+  'entertainment.zoo': '動物園',
+  'entertainment.aquarium': '水族館',
+  'entertainment.theme_park': 'テーマパーク',
+  'entertainment.casino': 'カジノ',
+  'entertainment.nightclub': 'ナイトクラブ',
+  'tourism': '観光',
+  'tourism.sights': '観光地',
+  'tourism.attraction': 'アトラクション',
+  'tourism.information': '観光案内所',
+  'commercial': '商業施設',
+  'commercial.shopping_mall': 'ショッピングモール',
+  'commercial.supermarket': 'スーパーマーケット',
+  'commercial.marketplace': 'マーケットプレイス',
+  'commercial.department_store': 'デパート',
+  'sport': 'スポーツ',
+  'sport.fitness': 'フィットネス',
+  'sport.swimming': '水泳',
+  'sport.tennis': 'テニス',
+  'sport.golf': 'ゴルフ',
+  'sport.skiing': 'スキー',
+  'natural': '自然',
+  'natural.beach': 'ビーチ',
+  'natural.park': '公園',
+  'natural.forest': '森林',
+  'natural.mountain': '山',
+  'natural.lake': '湖',
+  'natural.river': '川',
+  'service': 'サービス',
+  'service.banking': '銀行',
+  'service.healthcare': '医療',
+  'service.pharmacy': '薬局',
+  'service.post': '郵便局',
+  'service.police': '警察署',
+  'service.fire_station': '消防署',
+  'religion': '宗教施設',
+  'religion.christian': 'キリスト教',
+  'religion.buddhist': '仏教',
+  'religion.hindu': 'ヒンドゥー教',
+  'religion.jewish': 'ユダヤ教',
+  'religion.muslim': 'イスラム教',
+  'education': '教育',
+  'education.school': '学校',
+  'education.university': '大学',
+  'education.college': 'カレッジ',
+  'education.kindergarten': '幼稚園',
+  'education.library': '図書館'
 };
 
 function getSelectedCategories(): string[] {
@@ -600,37 +600,37 @@ function updateCategorySelection(): void {
   const categoryStatus = document.getElementById('category-status') as HTMLElement;
   if (categoryStatus) {
     if (selectedCount === 0) {
-      categoryStatus.textContent = 'Search with random category';
+      categoryStatus.textContent = 'ランダムカテゴリで検索';
     } else if (selectedCount === totalCount) {
-      categoryStatus.textContent = 'Search all categories';
+      categoryStatus.textContent = 'すべてのカテゴリで検索';
     } else {
-      categoryStatus.textContent = `${selectedCount} categories selected`;
+      categoryStatus.textContent = `${selectedCount}個のカテゴリを選択中`;
     }
   }
 }
 
 // Popular countries list
 const POPULAR_COUNTRIES: Country[] = [
-  { code: 'JP', name: 'Japan' },
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'FR', name: 'France' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'IT', name: 'Italy' },
-  { code: 'ES', name: 'Spain' },
-  { code: 'CA', name: 'Canada' },
-  { code: 'AU', name: 'Australia' },
-  { code: 'KR', name: 'South Korea' },
-  { code: 'CN', name: 'China' },
-  { code: 'TH', name: 'Thailand' },
-  { code: 'SG', name: 'Singapore' },
-  { code: 'BR', name: 'Brazil' },
-  { code: 'IN', name: 'India' },
-  { code: 'RU', name: 'Russia' },
-  { code: 'MX', name: 'Mexico' },
-  { code: 'TR', name: 'Turkey' },
-  { code: 'EG', name: 'Egypt' },
-  { code: 'ZA', name: 'South Africa' }
+  { code: 'JP', name: '日本' },
+  { code: 'US', name: 'アメリカ' },
+  { code: 'GB', name: 'イギリス' },
+  { code: 'FR', name: 'フランス' },
+  { code: 'DE', name: 'ドイツ' },
+  { code: 'IT', name: 'イタリア' },
+  { code: 'ES', name: 'スペイン' },
+  { code: 'CA', name: 'カナダ' },
+  { code: 'AU', name: 'オーストラリア' },
+  { code: 'KR', name: '韓国' },
+  { code: 'CN', name: '中国' },
+  { code: 'TH', name: 'タイ' },
+  { code: 'SG', name: 'シンガポール' },
+  { code: 'BR', name: 'ブラジル' },
+  { code: 'IN', name: 'インド' },
+  { code: 'RU', name: 'ロシア' },
+  { code: 'MX', name: 'メキシコ' },
+  { code: 'TR', name: 'トルコ' },
+  { code: 'EG', name: 'エジプト' },
+  { code: 'ZA', name: '南アフリカ' }
 ];
 
 // GeoDB Cities API functions

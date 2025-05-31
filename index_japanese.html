@@ -10,16 +10,16 @@
     <div class="container">
         <header>
             <h1>Trander</h1>
-            <p class="tagline">Discover new places within 200km</p>
+            <p class="tagline">50km圏内の新しい場所を発見しよう</p>
         </header>
 
         <main>
             <div id="category-selection" class="category-selection">
-                <h3>Select Categories</h3>
+                <h3>カテゴリを選択</h3>
                 <div class="category-controls">
                     <label class="category-item select-all-item">
                         <input type="checkbox" id="select-all-checkbox" class="category-checkbox">
-                        <span>Search all categories</span>
+                        <span>すべてのカテゴリから検索</span>
                     </label>
                     <div id="category-status" class="category-status"></div>
                 </div>
@@ -27,44 +27,44 @@
                 <div id="main-categories" class="category-grid">
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="tourism">
-                        <span>Tourism</span>
+                        <span>観光</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="entertainment">
-                        <span>Entertainment</span>
+                        <span>エンターテイメント</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="catering">
-                        <span>Dining</span>
+                        <span>飲食</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="commercial">
-                        <span>Shopping</span>
+                        <span>ショッピング</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="accommodation">
-                        <span>Accommodation</span>
+                        <span>宿泊施設</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="sport">
-                        <span>Sports</span>
+                        <span>スポーツ</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="natural">
-                        <span>Nature</span>
+                        <span>自然</span>
                     </label>
                     <label class="category-item">
                         <input type="checkbox" class="category-checkbox" value="service">
-                        <span>Services</span>
+                        <span>サービス</span>
                     </label>
                 </div>
 
                 <div class="category-toggle">
-                    <button id="toggle-detailed" class="toggle-btn">Show detailed categories</button>
+                    <button id="toggle-detailed" class="toggle-btn">詳細カテゴリを表示</button>
                 </div>
 
                 <div id="detailed-categories" class="detailed-categories hidden">
-                    <h4>Detailed Categories</h4>
+                    <h4>詳細カテゴリ</h4>
                     <div id="detailed-grid" class="category-grid detailed-grid">
                         <!-- Detailed categories will be populated by JavaScript -->
                     </div>
@@ -73,7 +73,7 @@
 
             <div id="location-display" class="location-card hidden">
                 <div class="location-image-container">
-                    <img id="location-image" src="" alt="Location image">
+                    <img id="location-image" src="" alt="場所の画像">
                 </div>
                 <div class="location-info">
                     <h2 id="location-name"></h2>
@@ -83,32 +83,32 @@
                 </div>
                 <div class="action-buttons">
                     <button id="favorite-btn" class="action-btn">
-                        <span class="icon">♥</span> Favorite
+                        <span class="icon">♥</span> お気に入り
                     </button>
                     <button id="share-btn" class="action-btn">
-                        <span class="icon">↗</span> Share
+                        <span class="icon">↗</span> シェア
                     </button>
                 </div>
             </div>
 
             <div id="welcome-message" class="welcome">
-                <p>Press a button to discover amazing places nearby!</p>
+                <p>ボタンを押して、近くの素敵な場所を見つけましょう！</p>
             </div>
 
             <div class="search-buttons">
                 <button id="discover-btn" class="discover-button">
-                    <span class="button-text">Search from current location</span>
+                    <span class="button-text">現在地から探す</span>
                     <span class="button-icon">📍</span>
                 </button>
 
                 <div class="world-search-container">
                     <div class="country-selector">
                         <select id="country-select" class="country-dropdown">
-                            <option value="">Select a country...</option>
+                            <option value="">国を選択...</option>
                         </select>
                     </div>
                     <button id="world-discover-btn" class="discover-button world-button" disabled>
-                        <span class="button-text">Search worldwide</span>
+                        <span class="button-text">世界から探す</span>
                         <span class="button-icon">🌍</span>
                     </button>
                 </div>
@@ -119,7 +119,7 @@
 
         <footer>
             <div id="favorites-list" class="favorites hidden">
-                <h3>Favorite Places</h3>
+                <h3>お気に入りの場所</h3>
                 <ul id="favorites-items"></ul>
             </div>
         </footer>
