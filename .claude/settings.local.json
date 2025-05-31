@@ -6,7 +6,8 @@
       "Bash(rg:*)",
       "Bash(mkdir:*)",
       "Bash(npm install)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }
