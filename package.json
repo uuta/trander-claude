@@ -5,13 +5,13 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "tsc": "tsc",
+    "tsc:watch": "tsc --watch",
     "server": "python3 server.py",
-    "start": "npm run dev & npm run server",
-    "vite:build": "vite build",
-    "vite:dev": "vite",
-    "vite:preview": "vite preview"
+    "start": "npm run tsc:watch & npm run server"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
