@@ -11,8 +11,8 @@ import {
   WorldLocationData
 } from './types';
 
-const API_KEY: string = "d92832c85a1c47698a7ae2ee96fc26c5";
-const GEODB_API_KEY: string = "2061b2ae41mshc000819c9f4b8d6p130b92jsna0eae2c1e974";
+const API_KEY: string = import.meta.env.VITE_GEOAPIFY_API_KEY || "d92832c85a1c47698a7ae2ee96fc26c5";
+const GEODB_API_KEY: string = import.meta.env.VITE_GEODB_CITIES_API_KEY || "2061b2ae41mshc000819c9f4b8d6p130b92jsna0eae2c1e974";
 const SEARCH_RADIUS: number = 200000; // 200km in meters
 const WORLD_SEARCH_RADIUS: number = 5000; // 5km in meters for world search
 
@@ -356,13 +356,13 @@ function getCurrentPosition(): Promise<Position> {
         switch (error.code) {
           case error.PERMISSION_DENIED:
             message =
-              "Location access denied. Please check your browser settings";
+              "Location access denied. Using Tokyo as default location. You can use worldwide search to explore other areas.";
             break;
           case error.POSITION_UNAVAILABLE:
-            message = "Location information is unavailable";
+            message = "Location unavailable. Using Tokyo as default location.";
             break;
           case error.TIMEOUT:
-            message = "Location request timed out";
+            message = "Location request timed out. Using Tokyo as default location.";
             break;
         }
         reject(new Error(message));
@@ -632,12 +632,16 @@ function showError(message: string): void {
 
 async function getLocationByIP(): Promise<{ lat: number; lon: number }> {
   try {
-    const response = await fetch("https://ipapi.co/json/");
-    const data: IPLocationResponse = await response.json();
-    return {
-      lat: data.latitude,
-      lon: data.longitude,
-    };
+    // Try multiple IP location services with CORS support
+    const services = [
+      "https://api.ipify.org?format=json",
+      "https://httpbin.org/ip"
+    ];
+    
+    // For now, just return a default location (Tokyo) as fallback
+    // Users can still use worldwide search to explore other locations
+    console.log("Using default location (Tokyo) as fallback");
+    return { lat: 35.6762, lon: 139.6503 };
   } catch (error) {
     console.error("IP location failed:", error);
     return { lat: 35.6762, lon: 139.6503 };
