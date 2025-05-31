@@ -3,3 +3,8 @@ dist/
 .env
 .DS_Store
 *.log
+
+# Compiled TypeScript files
+src/*.js
+src/*.js.map
+*.js.map

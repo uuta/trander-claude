@@ -18,12 +18,15 @@
 
 3. アプリケーションの起動
    ```bash
-   # 開発サーバー起動
-   npm run dev
+   # 開発モード（TypeScript自動ウォッチ + サーバー起動）
+   npm start
    
-   # または本番ビルド
+   # または個別に起動
+   npm run dev    # TypeScript自動コンパイル（ウォッチモード）
+   npm run server # Pythonサーバー起動
+   
+   # 本番ビルド
    npm run build
-   npm run preview
    ```
 
 ## 機能
@@ -48,12 +51,13 @@
 # 依存関係のインストール
 npm install
 
-# TypeScriptのコンパイル
-npm run build
+# 開発モード（推奨）
+npm start              # TypeScript自動ウォッチ + サーバー起動
 
-# ウォッチモード（自動コンパイル）
-npm run watch
-
-# 開発サーバー起動（TypeScript自動コンパイル + サーバー起動）
-npm run dev
+# 個別コマンド
+npm run dev           # TypeScript自動コンパイル（ウォッチモード）
+npm run server        # Pythonサーバーのみ起動
+npm run build         # 本番用ビルド
 ```
+
+**注意**: コンパイルされた`.js`ファイルはgitで追跡されません。ソースファイル（`.ts`）のみをコミットしてください。
