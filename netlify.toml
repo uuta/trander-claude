@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "npx tsc"
+  command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
