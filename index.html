@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trander - ランダムロケーション探索</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Trander</h1>
+            <p class="tagline">50km圏内の新しい場所を発見しよう</p>
+        </header>
+
+        <main>
+            <div id="category-selection" class="category-selection">
+                <h3>カテゴリを選択</h3>
+                <div class="category-controls">
+                    <label class="category-item select-all-item">
+                        <input type="checkbox" id="select-all-checkbox" class="category-checkbox">
+                        <span>すべてのカテゴリから検索</span>
+                    </label>
+                    <div id="category-status" class="category-status"></div>
+                </div>
+
+                <div id="main-categories" class="category-grid">
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="tourism">
+                        <span>観光</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="entertainment">
+                        <span>エンターテイメント</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="catering">
+                        <span>飲食</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="commercial">
+                        <span>ショッピング</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="accommodation">
+                        <span>宿泊施設</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="sport">
+                        <span>スポーツ</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="natural">
+                        <span>自然</span>
+                    </label>
+                    <label class="category-item">
+                        <input type="checkbox" class="category-checkbox" value="service">
+                        <span>サービス</span>
+                    </label>
+                </div>
+
+                <div class="category-toggle">
+                    <button id="toggle-detailed" class="toggle-btn">詳細カテゴリを表示</button>
+                </div>
+
+                <div id="detailed-categories" class="detailed-categories hidden">
+                    <h4>詳細カテゴリ</h4>
+                    <div id="detailed-grid" class="category-grid detailed-grid">
+                        <!-- Detailed categories will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="location-display" class="location-card hidden">
+                <div class="location-image-container">
+                    <img id="location-image" src="" alt="場所の画像">
+                </div>
+                <div class="location-info">
+                    <h2 id="location-name"></h2>
+                    <p id="location-address" class="address"></p>
+                    <p id="location-distance" class="distance"></p>
+                    <div id="location-details" class="details"></div>
+                </div>
+                <div class="action-buttons">
+                    <button id="favorite-btn" class="action-btn">
+                        <span class="icon">♥</span> お気に入り
+                    </button>
+                    <button id="share-btn" class="action-btn">
+                        <span class="icon">↗</span> シェア
+                    </button>
+                </div>
+            </div>
+
+            <div id="welcome-message" class="welcome">
+                <p>ボタンを押して、近くの素敵な場所を見つけましょう！</p>
+            </div>
+
+            <button id="discover-btn" class="discover-button">
+                <span class="button-text">新しい場所を探す</span>
+                <span class="button-icon">🎲</span>
+            </button>
+
+            <div id="error-message" class="error hidden"></div>
+        </main>
+
+        <footer>
+            <div id="favorites-list" class="favorites hidden">
+                <h3>お気に入りの場所</h3>
+                <ul id="favorites-items"></ul>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="./src/app.ts"></script>
+</body>
+</html>

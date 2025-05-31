@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.geoapify.com)",
+      "WebFetch(domain:apidocs.geoapify.com)",
+      "Bash(rg:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": []
+  }
+}
