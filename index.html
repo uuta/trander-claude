@@ -15,7 +15,8 @@
 
         <main>
             <div id="category-selection" class="category-selection">
-                <h3>Select Categories</h3>
+                <h3 id="category-header" class="category-header">Select Categories <span class="collapse-icon">▼</span></h3>
+                <div id="category-content" class="category-content">
                 <div class="category-controls">
                     <label class="category-item select-all-item">
                         <input type="checkbox" id="select-all-checkbox" class="category-checkbox">
@@ -69,6 +70,7 @@
                         <!-- Detailed categories will be populated by JavaScript -->
                     </div>
                 </div>
+                </div>
             </div>
 
             <div id="location-display" class="location-card hidden">
@@ -91,27 +93,42 @@
                 </div>
             </div>
 
-            <div id="welcome-message" class="welcome">
-                <p>Press a button to discover amazing places nearby!</p>
-            </div>
-
-            <div class="search-buttons">
-                <button id="discover-btn" class="discover-button">
-                    <span class="button-text">Search from current location</span>
-                    <span class="button-icon">📍</span>
-                </button>
-
-                <div class="world-search-container">
-                    <div class="country-selector">
-                        <select id="country-select" class="country-dropdown">
-                            <option value="">Select a country...</option>
-                        </select>
-                    </div>
-                    <button id="world-discover-btn" class="discover-button world-button" disabled>
-                        <span class="button-text">Search worldwide</span>
-                        <span class="button-icon">🌍</span>
+            <div class="search-mode-selector">
+                <h3>Search Mode</h3>
+                <div class="mode-tabs">
+                    <button id="local-mode-btn" class="mode-tab active">
+                        <span class="mode-icon">📍</span>
+                        <span>Current Location</span>
+                    </button>
+                    <button id="world-mode-btn" class="mode-tab">
+                        <span class="mode-icon">🌍</span>
+                        <span>Worldwide</span>
                     </button>
                 </div>
+            </div>
+
+            <div id="local-search-options" class="search-options">
+                <div id="welcome-message" class="welcome">
+                    <p>Discover amazing places near your current location!</p>
+                </div>
+            </div>
+
+            <div id="world-search-options" class="search-options hidden">
+                <div class="country-selector">
+                    <select id="country-select" class="country-dropdown">
+                        <option value="">Select a country...</option>
+                    </select>
+                </div>
+                <div class="welcome">
+                    <p>Discover amazing places around the world!</p>
+                </div>
+            </div>
+
+            <div class="search-action">
+                <button id="discover-btn" class="discover-button">
+                    <span id="discover-text" class="button-text">Discover Places</span>
+                    <span id="discover-icon" class="button-icon">🔍</span>
+                </button>
             </div>
 
             <div id="error-message" class="error hidden"></div>

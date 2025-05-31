@@ -20,8 +20,13 @@ let currentLocation: GeoapifyPlace | null = null;
 let favorites: FavoritePlace[] = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 const discoverBtn = document.getElementById("discover-btn") as HTMLButtonElement;
-const worldDiscoverBtn = document.getElementById("world-discover-btn") as HTMLButtonElement;
 const countrySelect = document.getElementById("country-select") as HTMLSelectElement;
+const localModeBtn = document.getElementById("local-mode-btn") as HTMLButtonElement;
+const worldModeBtn = document.getElementById("world-mode-btn") as HTMLButtonElement;
+const localSearchOptions = document.getElementById("local-search-options") as HTMLElement;
+const worldSearchOptions = document.getElementById("world-search-options") as HTMLElement;
+const discoverText = document.getElementById("discover-text") as HTMLElement;
+const discoverIcon = document.getElementById("discover-icon") as HTMLElement;
 const locationDisplay = document.getElementById("location-display") as HTMLElement;
 const welcomeMessage = document.getElementById("welcome-message") as HTMLElement;
 const errorMessage = document.getElementById("error-message") as HTMLElement;
@@ -30,19 +35,67 @@ const shareBtn = document.getElementById("share-btn") as HTMLButtonElement;
 const favoritesList = document.getElementById("favorites-list") as HTMLElement;
 const favoritesItems = document.getElementById("favorites-items") as HTMLUListElement;
 
-discoverBtn.addEventListener("click", discoverNewLocation);
-worldDiscoverBtn.addEventListener("click", discoverWorldLocation);
+discoverBtn.addEventListener("click", handleDiscoverClick);
 favoriteBtn.addEventListener("click", toggleFavorite);
 shareBtn.addEventListener("click", shareLocation);
 countrySelect.addEventListener("change", handleCountrySelection);
+localModeBtn.addEventListener("click", () => switchMode('local'));
+worldModeBtn.addEventListener("click", () => switchMode('world'));
 let categoryCheckboxes = document.querySelectorAll('.category-checkbox') as NodeListOf<HTMLInputElement>;
 const selectAllCheckbox = document.getElementById('select-all-checkbox') as HTMLInputElement;
 const toggleDetailedBtn = document.getElementById('toggle-detailed') as HTMLButtonElement;
 const detailedCategories = document.getElementById('detailed-categories') as HTMLElement;
 const detailedGrid = document.getElementById('detailed-grid') as HTMLElement;
+const categoryHeader = document.getElementById('category-header') as HTMLElement;
+const categoryContent = document.getElementById('category-content') as HTMLElement;
 
 toggleDetailedBtn.addEventListener('click', toggleDetailedCategories);
 selectAllCheckbox.addEventListener('change', handleSelectAll);
+
+let currentMode: 'local' | 'world' = 'local';
+
+function switchMode(mode: 'local' | 'world'): void {
+  currentMode = mode;
+  
+  // Update tab appearance
+  if (mode === 'local') {
+    localModeBtn.classList.add('active');
+    worldModeBtn.classList.remove('active');
+    localSearchOptions.classList.remove('hidden');
+    worldSearchOptions.classList.add('hidden');
+    discoverText.textContent = 'Discover Places';
+    discoverIcon.textContent = '🔍';
+    discoverBtn.disabled = false;
+  } else {
+    worldModeBtn.classList.add('active');
+    localModeBtn.classList.remove('active');
+    worldSearchOptions.classList.remove('hidden');
+    localSearchOptions.classList.add('hidden');
+    discoverText.textContent = 'Discover Places';
+    discoverIcon.textContent = '🔍';
+    discoverBtn.disabled = !countrySelect.value;
+  }
+}
+
+function handleDiscoverClick(): void {
+  if (currentMode === 'local') {
+    discoverNewLocation();
+  } else {
+    discoverWorldLocation();
+  }
+}
+
+function toggleCategorySection(): void {
+  const isCollapsed = categoryContent.classList.contains('collapsed');
+  
+  if (isCollapsed) {
+    categoryContent.classList.remove('collapsed');
+    categoryHeader.classList.remove('collapsed');
+  } else {
+    categoryContent.classList.add('collapsed');
+    categoryHeader.classList.add('collapsed');
+  }
+}
 
 function updateCategoryCheckboxes(): void {
   categoryCheckboxes = document.querySelectorAll('.category-checkbox') as NodeListOf<HTMLInputElement>;
@@ -93,6 +146,11 @@ function init(): void {
     favoritesList.classList.remove("hidden");
   }
   populateCountryDropdown();
+  
+  // Setup category header click listener
+  if (categoryHeader && categoryContent) {
+    categoryHeader.addEventListener('click', toggleCategorySection);
+  }
 }
 
 function populateCountryDropdown(): void {
@@ -106,7 +164,9 @@ function populateCountryDropdown(): void {
 
 function handleCountrySelection(): void {
   const selectedCountry = countrySelect.value;
-  worldDiscoverBtn.disabled = !selectedCountry;
+  if (currentMode === 'world') {
+    discoverBtn.disabled = !selectedCountry;
+  }
 }
 
 async function discoverWorldLocation(): Promise<void> {
@@ -115,8 +175,8 @@ async function discoverWorldLocation(): Promise<void> {
 
   try {
     errorMessage.classList.add("hidden");
-    worldDiscoverBtn.disabled = true;
-    worldDiscoverBtn.innerHTML =
+    discoverBtn.disabled = true;
+    discoverBtn.innerHTML =
       '<span class="button-text">Searching...</span> <span class="button-icon loading-spinner">◐</span>';
 
     const worldData = await searchWorldLocation(selectedCountry);
@@ -132,9 +192,9 @@ async function discoverWorldLocation(): Promise<void> {
     const errorMsg = error instanceof Error ? error.message : "An error occurred in worldwide search";
     showError(errorMsg);
   } finally {
-    worldDiscoverBtn.disabled = false;
-    worldDiscoverBtn.innerHTML =
-      '<span class="button-text">Search worldwide</span> <span class="button-icon">🌍</span>';
+    discoverBtn.disabled = !countrySelect.value;
+    discoverBtn.innerHTML =
+      '<span class="button-text">Discover Places</span> <span class="button-icon">🔍</span>';
   }
 }
 
@@ -172,7 +232,7 @@ async function discoverNewLocation(): Promise<void> {
   } finally {
     discoverBtn.disabled = false;
     discoverBtn.innerHTML =
-      '<span class="button-text">Discover new place</span> <span class="button-icon">🎲</span>';
+      '<span class="button-text">Discover Places</span> <span class="button-icon">🔍</span>';
   }
 }
 

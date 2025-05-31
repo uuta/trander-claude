@@ -153,26 +153,87 @@ h1 {
     margin: 40px 0;
 }
 
-.search-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    margin: 20px 0;
+.search-mode-selector {
+    background: #2a2a2a;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #404040;
 }
 
+.search-mode-selector h3 {
+    color: #e91e63;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.mode-tabs {
+    display: flex;
+    gap: 10px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 12px 20px;
+    background: transparent;
+    color: #b0b0b0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9em;
+}
+
+.mode-tab:hover {
+    background: #3a3a3a;
+    color: #e0e0e0;
+}
+
+.mode-tab.active {
+    background: #e91e63;
+    color: white;
+}
+
+.mode-icon {
+    font-size: 1.2em;
+}
+
+.search-options {
+    margin: 20px 0;
+    transition: opacity 0.3s ease;
+}
+
+.search-options.hidden {
+    display: none;
+}
+
+.search-action {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+/* Updated buttons - smaller size v2 */
 .discover-button {
-    padding: 20px 40px;
+    padding: 12px 20px;
     background: #e91e63;
     color: white;
     border: none;
-    border-radius: 50px;
-    font-size: 1.3em;
+    border-radius: 20px;
+    font-size: 1.0em;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 5px 20px rgba(233, 30, 99, 0.3);
-    min-width: 250px;
+    min-width: 160px;
 }
 
 .world-search-container {
@@ -181,7 +242,7 @@ h1 {
     gap: 15px;
     align-items: center;
     width: 100%;
-    max-width: 300px;
+    max-width: 250px;
 }
 
 .country-selector {
@@ -317,10 +378,45 @@ h1 {
     border: 1px solid #404040;
 }
 
-.category-selection h3 {
+.category-header {
     color: #e91e63;
     margin-bottom: 10px;
     font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.category-header:hover {
+    color: #d81b60;
+}
+
+.collapse-icon {
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+
+.category-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.category-content {
+    transition: all 0.3s ease;
+    max-height: 500px;
+    opacity: 1;
+    overflow: hidden;
+    display: block;
+}
+
+.category-content.collapsed {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .category-controls {
@@ -432,34 +528,3 @@ h1 {
     font-size: 0.8em;
 }
 
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-    
-    h1 {
-        font-size: 2.5em;
-    }
-    
-    .location-image-container {
-        height: 200px;
-    }
-    
-    .discover-button {
-        padding: 15px 30px;
-        font-size: 1.1em;
-    }
-
-    .category-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-    }
-
-    .category-item {
-        padding: 6px 10px;
-    }
-
-    .category-item span {
-        font-size: 0.8em;
-    }
-}
