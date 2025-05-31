@@ -8,3 +8,8 @@ dist/
 src/*.js
 src/*.js.map
 *.js.map
+
+# Environment variables
+.env
+.env.local
+.env.production
