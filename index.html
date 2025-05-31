@@ -95,10 +95,24 @@
                 <p>ボタンを押して、近くの素敵な場所を見つけましょう！</p>
             </div>
 
-            <button id="discover-btn" class="discover-button">
-                <span class="button-text">新しい場所を探す</span>
-                <span class="button-icon">🎲</span>
-            </button>
+            <div class="search-buttons">
+                <button id="discover-btn" class="discover-button">
+                    <span class="button-text">現在地から探す</span>
+                    <span class="button-icon">📍</span>
+                </button>
+
+                <div class="world-search-container">
+                    <div class="country-selector">
+                        <select id="country-select" class="country-dropdown">
+                            <option value="">国を選択...</option>
+                        </select>
+                    </div>
+                    <button id="world-discover-btn" class="discover-button world-button" disabled>
+                        <span class="button-text">世界から探す</span>
+                        <span class="button-icon">🌍</span>
+                    </button>
+                </div>
+            </div>
 
             <div id="error-message" class="error hidden"></div>
         </main>

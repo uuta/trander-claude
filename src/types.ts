@@ -53,3 +53,34 @@ export interface CategoryDefinition {
 }
 
 export type CategoryKey = keyof CategoryDefinition;
+
+// GeoDB Cities API types
+export interface GeoDBCity {
+  id: number;
+  name: string;
+  country: string;
+  countryCode: string;
+  latitude: number;
+  longitude: number;
+  population: number;
+  region?: string;
+  regionCode?: string;
+}
+
+export interface GeoDBSearchResponse {
+  data: GeoDBCity[];
+  metadata: {
+    currentOffset: number;
+    totalCount: number;
+  };
+}
+
+export interface Country {
+  code: string;
+  name: string;
+}
+
+export interface WorldLocationData {
+  city: GeoDBCity;
+  places: GeoapifyPlace[];
+}

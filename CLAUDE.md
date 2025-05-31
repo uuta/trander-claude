@@ -17,9 +17,10 @@ https://api.geoapify.com/v2/places?categories={categories}&filter=rect%3A10.7164
 1. GeoNames APIを使用して、ランダムな都市と座標を取得
    - 人口フィルターで主要都市に限定
    - 都市名、国名、緯度経度を取得
+   - 国はユーザーがUIから選択できる
 
 2. 取得した座標を基に、周辺施設を検索
-   - Google Places APIで周辺のホテル、商業施設、観光スポットなどを取得
+   - Geoapify Places APIで周辺のホテル、商業施設、観光スポットなどを取得
    - 半径5km圏内で検索
 
 3. 最終的な返却データ
@@ -29,8 +30,10 @@ https://api.geoapify.com/v2/places?categories={categories}&filter=rect%3A10.7164
 注意点：
 - GeoNames APIは登録必須（無料）
 - リクエスト制限への対応が必要
-- 施設検索にはGoogle Places APIの利用と課金設定が必要
+- 施設検索にはGeoapify Places APIの利用と課金設定が必要
 ### 機能3: お気に入りに入れた場所の閲覧
+```
+```
 ## Usecase
 - 新しい場所を探してるけど面倒臭いな・・・
 - ランダムに場所を提案してもらいたいな
