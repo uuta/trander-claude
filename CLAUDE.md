@@ -1,55 +1,33 @@
-## プロジェクトの概要
-- このアプリケーションはユーザーの現在地から200km以内のlocationを返すアプリケーションです。
+# Trander - Claude Development Context
 
-## Tech stack
-### APIについて
-- **現在地検索**: Geoapify Places APIを使用
-- **世界検索**: GeoDB Cities API + Geoapify Places APIを使用
-- categoriesはユーザーが選べるようにしました
+このプロジェクトは以下の構成で管理されています：
 
-### API詳細
-1. **Geoapify Places API** - 施設検索（現在地・世界共通）
-```
-https://api.geoapify.com/v2/places?categories={categories}&filter=circle:{lon},{lat},{radius}&limit=50&apiKey={apiKey}
+## 📋 プロジェクト設計書
+- **[PROJECT_REQUIREMENTS.md](./docs/PROJECT_REQUIREMENTS.md)** - ビジネス要件・機能仕様
+- **[CODING_GUIDELINES.md](./docs/CODING_GUIDELINES.md)** - 開発標準・コーディング規約  
+- **[DEVELOPMENT_SETUP.md](./docs/DEVELOPMENT_SETUP.md)** - 開発環境構築・コマンド集
+- **[LLM_GUIDELINES.md](./docs/LLM_GUIDELINES.md)** - AI アシスタント向けガイドライン
+
+## 🎯 プロジェクト概要
+ユーザーの現在地から200km以内、または世界中のランダムな場所を発見できるロケーション探索アプリケーション
+
+## 🛠️ 主要技術
+- **TypeScript** + **Vite** + **Netlify**
+- **APIs**: Geoapify Places API, GeoDB Cities API
+- **UI**: ダークモード、ピンク・グリーンカラーテーマ
+
+## 📦 主要コマンド
+```bash
+npm run dev      # 開発サーバー起動
+npm run build    # 本番ビルド  
+npm start        # レガシー開発環境
 ```
 
-2. **GeoDB Cities API** - 世界の都市データ取得
-```
-https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds={countryCode}&minPopulation=100000&limit=10
-```
-## 機能
-### 機能1: 現在地からのロケーション取得
-- ユーザーがボタンを押すと 、現在地から200km以内のランダムな場所を提案します。提案される場所は一度に一つで、場所名、写真、そして詳細情報が表示されます。
-- ユーザーは、現在地を元に200km以内の場所を検索できます。
-- ユーザーに現在地の取得を許可してもらう必要があります。
-### 機能2: 全世界からのランダムのロケーション取得
-1. GeoNames APIを使用して、ランダムな都市と座標を取得
-   - 人口フィルターで主要都市に限定
-   - 都市名、国名、緯度経度を取得
-   - 国はユーザーがUIから選択できる
+## 🔧 開発時の注意点
+- 環境変数 `VITE_GEOAPIFY_API_KEY`, `VITE_GEODB_CITIES_API_KEY` が必要
+- 位置情報拒否時は東京座標をフォールバック
+- TypeScript型安全性を重視
+- 地図表示なし（テキスト・画像のみ）
 
-2. 取得した座標を基に、周辺施設を検索
-   - Geoapify Places APIで周辺のホテル、商業施設、観光スポットなどを取得
-   - 半径5km圏内で検索
-
-3. 最終的な返却データ
-   - 都市情報（名称、国、人口、座標）
-   - 施設情報（名称、種類、評価、住所、座標）
-
-注意点：
-- GeoDB Cities APIはRapidAPI経由で利用（月1,000リクエスト無料）
-- Geoapify Places APIで施設検索とその詳細情報を取得
-- 地図表示は行わず、テキスト情報のみで場所を提示
-### 機能3: お気に入りに入れた場所の閲覧
-```
-```
-## Usecase
-- 新しい場所を探してるけど面倒臭いな・・・
-- ランダムに場所を提案してもらいたいな
-## デザイン
-- UIは直感的で使いやすいデザインを心掛けましょう。
-- 基本はdarkmodeです。
-- 色使いのメインカラーはpinkで、 その補色である緑も併用し、視覚的な鮮やかさとバランスを保つことを目指しましょう。
-- 各ボタンや要素のレイアウトはシンプルですがユニークな形状を持っており、ユーザーが容易に目的の機能を理解し利用できるよう設計します。
-- 地図表示は行わず、ロケーション詳細情報はテキストと画像形式で提示しましょう。
-- アプリは、ユーザーがロケーションを「お気に入り」に登録したり、SNSやメールで友人と共有できる機能も備えています。
+---
+**詳細な要件や開発ガイドラインは上記の専用ファイルを参照してください。**
