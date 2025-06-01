@@ -12,6 +12,7 @@
 - **NEVER** hardcode API keys in source code
 - **NEVER** commit `.env` files with real credentials
 - Always use environment variables: `import.meta.env.VITE_API_KEY`
+- **NEVER** delete .env files
 
 ### Deployment
 - **NEVER** deploy to production automatically
