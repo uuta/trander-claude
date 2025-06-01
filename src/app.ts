@@ -452,7 +452,7 @@ async function searchNearbyPlaces(
     ? categories.join(",")
     : categories;
 
-  const url = `https://api.geoapify.com/v2/places?categories=${category}&filter=circle:${lon},${lat},${radius}&limit=50&apiKey=${API_KEY}`;
+  const url = `https://api.geoapify.com/v2/places?categories=${category}&filter=circle:${lon},${lat},${radius}&limit=50&details=contact,rating,price,accessibility,features&apiKey=${API_KEY}`;
 
   try {
     const response = await fetch(url);
@@ -504,17 +504,73 @@ function displayLocation(
   locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from your location`;
 
   const details: string[] = [];
+  
+  // Basic information
   if (properties.categories) {
-    details.push(`Category: ${formatCategories(properties.categories)}`);
+    details.push(`📍 Category: ${formatCategories(properties.categories)}`);
   }
-  if (properties.opening_hours) {
-    details.push(`Opening hours: ${properties.opening_hours}`);
+  
+  // Brand/Operator information
+  if (properties.brand) {
+    details.push(`🏪 Brand: ${properties.brand}`);
+  }
+  if (properties.operator && properties.operator !== properties.brand) {
+    details.push(`🏢 Operator: ${properties.operator}`);
+  }
+  
+  // Contact information
+  if (properties.phone) {
+    details.push(`📞 Phone: <a href="tel:${properties.phone}">${properties.phone}</a>`);
+  }
+  if (properties.email) {
+    details.push(`📧 Email: <a href="mailto:${properties.email}">${properties.email}</a>`);
   }
   if (properties.website) {
-    details.push(
-      `<a href="${properties.website}" target="_blank" rel="noopener">Website</a>`,
-    );
+    details.push(`🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`);
   }
+  
+  // Rating and pricing
+  if (properties.rating) {
+    const stars = '⭐'.repeat(Math.floor(properties.rating));
+    details.push(`${stars} Rating: ${properties.rating}/5`);
+  }
+  if (properties.price_level) {
+    details.push(`💰 Price: ${properties.price_level}`);
+  }
+  
+  // Cuisine for restaurants
+  if (properties.cuisine) {
+    details.push(`🍽️ Cuisine: ${properties.cuisine}`);
+  }
+  
+  // Hours and accessibility
+  if (properties.opening_hours) {
+    details.push(`🕒 Hours: ${properties.opening_hours}`);
+  }
+  if (properties.wheelchair) {
+    const wheelchairIcon = properties.wheelchair === 'yes' ? '♿✅' : '♿❓';
+    details.push(`${wheelchairIcon} Wheelchair: ${properties.wheelchair}`);
+  }
+  
+  // Features and amenities
+  if (properties.internet_access) {
+    const wifiIcon = properties.internet_access === 'wlan' ? '📶' : '📶❓';
+    details.push(`${wifiIcon} WiFi: ${properties.internet_access}`);
+  }
+  if (properties.outdoor_seating) {
+    const outdoorIcon = properties.outdoor_seating === 'yes' ? '🪑✅' : '🪑❓';
+    details.push(`${outdoorIcon} Outdoor seating: ${properties.outdoor_seating}`);
+  }
+  if (properties.smoking) {
+    const smokingIcon = properties.smoking === 'no' ? '🚭' : '🚬';
+    details.push(`${smokingIcon} Smoking: ${properties.smoking}`);
+  }
+  
+  // Description
+  if (properties.description) {
+    details.push(`📝 ${properties.description}`);
+  }
+  
   locationDetailsEl.innerHTML = details.join("<br>");
 
   // Try to get image from API response first, then fallback to placeholder
@@ -583,19 +639,77 @@ function displayWorldLocation(
   locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from ${city.name}, ${city.country}`;
 
   const details: string[] = [];
+  
+  // City information
   details.push(`🏙️ City: ${city.name}, ${city.country}`);
   details.push(`👥 Population: ${city.population.toLocaleString()}`);
+  
+  // Basic information
   if (properties.categories) {
     details.push(`📍 Category: ${formatCategories(properties.categories)}`);
   }
-  if (properties.opening_hours) {
-    details.push(`🕒 Opening hours: ${properties.opening_hours}`);
+  
+  // Brand/Operator information
+  if (properties.brand) {
+    details.push(`🏪 Brand: ${properties.brand}`);
+  }
+  if (properties.operator && properties.operator !== properties.brand) {
+    details.push(`🏢 Operator: ${properties.operator}`);
+  }
+  
+  // Contact information
+  if (properties.phone) {
+    details.push(`📞 Phone: <a href="tel:${properties.phone}">${properties.phone}</a>`);
+  }
+  if (properties.email) {
+    details.push(`📧 Email: <a href="mailto:${properties.email}">${properties.email}</a>`);
   }
   if (properties.website) {
-    details.push(
-      `🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`,
-    );
+    details.push(`🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`);
   }
+  
+  // Rating and pricing
+  if (properties.rating) {
+    const stars = '⭐'.repeat(Math.floor(properties.rating));
+    details.push(`${stars} Rating: ${properties.rating}/5`);
+  }
+  if (properties.price_level) {
+    details.push(`💰 Price: ${properties.price_level}`);
+  }
+  
+  // Cuisine for restaurants
+  if (properties.cuisine) {
+    details.push(`🍽️ Cuisine: ${properties.cuisine}`);
+  }
+  
+  // Hours and accessibility
+  if (properties.opening_hours) {
+    details.push(`🕒 Hours: ${properties.opening_hours}`);
+  }
+  if (properties.wheelchair) {
+    const wheelchairIcon = properties.wheelchair === 'yes' ? '♿✅' : '♿❓';
+    details.push(`${wheelchairIcon} Wheelchair: ${properties.wheelchair}`);
+  }
+  
+  // Features and amenities
+  if (properties.internet_access) {
+    const wifiIcon = properties.internet_access === 'wlan' ? '📶' : '📶❓';
+    details.push(`${wifiIcon} WiFi: ${properties.internet_access}`);
+  }
+  if (properties.outdoor_seating) {
+    const outdoorIcon = properties.outdoor_seating === 'yes' ? '🪑✅' : '🪑❓';
+    details.push(`${outdoorIcon} Outdoor seating: ${properties.outdoor_seating}`);
+  }
+  if (properties.smoking) {
+    const smokingIcon = properties.smoking === 'no' ? '🚭' : '🚬';
+    details.push(`${smokingIcon} Smoking: ${properties.smoking}`);
+  }
+  
+  // Description
+  if (properties.description) {
+    details.push(`📝 ${properties.description}`);
+  }
+  
   locationDetailsEl.innerHTML = details.join("<br>");
 
   // Handle image display (same as local search)

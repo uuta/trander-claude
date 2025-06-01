@@ -23,6 +23,19 @@ export interface PlaceProperties {
   website?: string;
   image?: string;
   photo?: string;
+  // Enhanced details from Geoapify API
+  phone?: string;
+  email?: string;
+  rating?: number;
+  price_level?: string;
+  wheelchair?: string;
+  internet_access?: string;
+  smoking?: string;
+  outdoor_seating?: string;
+  cuisine?: string;
+  brand?: string;
+  operator?: string;
+  description?: string;
 }
 
 export interface GeoapifyResponse {
