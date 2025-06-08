@@ -1,7 +1,7 @@
 # Trander - Project Requirements
 
 ## プロジェクトの概要
-このアプリケーションはユーザーの現在地から200km以内、または世界中のランダムな場所を発見できるロケーション探索アプリケーションです。
+世界中のランダムな場所を発見できるロケーション探索アプリケーションです。
 
 ## ユースケース
 - 新しい場所を探してるけど面倒臭いな・・・
@@ -22,8 +22,8 @@
 2. **都市取得**: GeoDB Cities APIでランダムな都市を取得
    - 人口10万人以上の主要都市に限定
    - 都市名、国名、人口、座標を取得
-3. **施設検索**: Geoapify Places APIで都市周辺の施設を検索
-   - 半径5km圏内で検索
+3. **施設検索**: Google Places APIで都市周辺の施設を検索
+   - 半径5km圏内で検索（ユーザーは設定で半径を変更できる）
    - ホテル、商業施設、観光スポット等を取得
 4. **表示**: 都市情報と施設情報をテキスト・画像形式で表示
 
@@ -39,10 +39,19 @@
 ## 技術要件
 
 ### API仕様
-1. **Geoapify Places API** - 施設検索
-   ```
-   https://api.geoapify.com/v2/places?categories={categories}&filter=circle:{lon},{lat},{radius}&limit=50&apiKey={apiKey}
-   ```
+1. **Google Places API** - 施設検索
+   - **Nearby Search**: 現在地周辺の施設検索
+     ```
+     https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={lat},{lng}&radius={radius}&type={type}&key={apiKey}
+     ```
+   - **Place Details**: 施設の詳細情報取得
+     ```
+     https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&fields={fields}&key={apiKey}
+     ```
+   - **Place Photos**: 施設の写真取得
+     ```
+     https://maps.googleapis.com/maps/api/place/photo?maxwidth={width}&photo_reference={photoReference}&key={apiKey}
+     ```
 
 2. **GeoDB Cities API** - 世界都市データ（RapidAPI経由）
    ```
@@ -50,6 +59,8 @@
    ```
 
 ### 制約事項
+- Google Nearby Search (New / Pro SKU) → 月 5,000 リクエストまで無料
+- Google Place Details Photos (新しいフォトエンドポイント / Enterprise SKU) → 月 1,000 リクエストまで無料
 - GeoDB Cities APIは月1,000リクエスト無料制限
 - 地図表示は行わない（テキスト・画像のみ）
 - ブラウザの位置情報取得が拒否された場合は東京をデフォルトに設定
