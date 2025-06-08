@@ -1,6 +1,6 @@
 import {
-  GeoapifyPlace,
-  GeoapifyResponse,
+  GooglePlace,
+  GooglePlacesResponse,
   FavoritePlace,
   Position,
   CategoryDefinition,
@@ -23,7 +23,7 @@ if (!GEODB_API_KEY) {
 const SEARCH_RADIUS: number = 200000; // 200km in meters
 const WORLD_SEARCH_RADIUS: number = 5000; // 5km in meters for world search
 
-let currentLocation: GeoapifyPlace | null = null;
+let currentLocation: GooglePlace | null = null;
 let favorites: FavoritePlace[] = JSON.parse(
   localStorage.getItem("favorites") || "[]",
 );
@@ -446,7 +446,7 @@ async function searchNearbyPlaces(
   lon: number,
   selectedCategories: string[] | null = null,
   radius: number = SEARCH_RADIUS,
-): Promise<GeoapifyPlace[]> {
+): Promise<GooglePlace[]> {
   const categories = selectedCategories || getSelectedCategories();
   const category = Array.isArray(categories)
     ? categories.join(",")
@@ -472,7 +472,7 @@ async function searchNearbyPlaces(
 }
 
 function displayLocation(
-  place: GeoapifyPlace,
+  place: GooglePlace,
   userLat: number,
   userLon: number,
 ): void {
@@ -608,7 +608,7 @@ function displayLocation(
 
 function displayWorldLocation(
   worldData: WorldLocationData,
-  place: GeoapifyPlace,
+  place: GooglePlace,
 ): void {
   currentLocation = place;
 

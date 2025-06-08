@@ -1,74 +1,72 @@
 // Type definitions for the Trander application
 
-export interface GeoapifyPlace {
-  type: 'Feature';
-  properties: PlaceProperties;
-  geometry: {
-    type: 'Point';
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-}
-
-export interface PlaceProperties {
+// Google Places API types
+export type GooglePlace = {
   place_id: string;
   name?: string;
-  street?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  lat: number;
-  lon: number;
-  categories?: string[];
-  opening_hours?: string;
-  website?: string;
-  image?: string;
-  photo?: string;
-  // Enhanced details from Geoapify API
-  phone?: string;
-  email?: string;
+  vicinity?: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
   rating?: number;
-  price_level?: string;
-  wheelchair?: string;
-  internet_access?: string;
-  smoking?: string;
-  outdoor_seating?: string;
-  cuisine?: string;
-  brand?: string;
-  operator?: string;
-  description?: string;
-}
+  price_level?: number; // 0-4 scale
+  types?: string[];
+  photos?: Array<{
+    photo_reference: string;
+    height: number;
+    width: number;
+  }>;
+  opening_hours?: {
+    open_now?: boolean;
+    weekday_text?: string[];
+  };
+  // Additional fields from Place Details API if needed
+  formatted_address?: string;
+  formatted_phone_number?: string;
+  website?: string;
+  business_status?: string;
+  wheelchair_accessible_entrance?: boolean;
+  editorial_summary?: {
+    overview?: string;
+  };
+};
 
-export interface GeoapifyResponse {
-  type: 'FeatureCollection';
-  features: GeoapifyPlace[];
-}
+export type GooglePlacesResponse = {
+  results: GooglePlace[];
+  status: string;
+  error_message?: string;
+  next_page_token?: string;
+};
 
-export interface FavoritePlace {
+export type FavoritePlace = {
   place_id: string;
   name: string;
   address: string;
-}
+};
 
-export interface Position {
+export type Position = {
   coords: {
     latitude: number;
     longitude: number;
   };
-}
+};
 
-export interface IPLocationResponse {
+export type IPLocationResponse = {
   latitude: number;
   longitude: number;
-}
+};
 
-export interface CategoryDefinition {
+export type CategoryDefinition = {
   [key: string]: string;
-}
+};
 
 export type CategoryKey = keyof CategoryDefinition;
 
 // GeoDB Cities API types
-export interface GeoDBCity {
+export type GeoDBCity = {
   id: number;
   name: string;
   country: string;
@@ -78,22 +76,22 @@ export interface GeoDBCity {
   population: number;
   region?: string;
   regionCode?: string;
-}
+};
 
-export interface GeoDBSearchResponse {
+export type GeoDBSearchResponse = {
   data: GeoDBCity[];
   metadata: {
     currentOffset: number;
     totalCount: number;
   };
-}
+};
 
-export interface Country {
+export type Country = {
   code: string;
   name: string;
-}
+};
 
-export interface WorldLocationData {
+export type WorldLocationData = {
   city: GeoDBCity;
-  places: GeoapifyPlace[];
-}
+  places: GooglePlace[];
+};
