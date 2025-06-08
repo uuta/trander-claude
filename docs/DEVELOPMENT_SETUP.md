@@ -10,7 +10,7 @@ npm install
 ### 2. 環境変数の設定
 `.env` ファイルを作成：
 ```bash
-VITE_GEOAPIFY_API_KEY=your_geoapify_api_key_here
+VITE_GOOGLE_CLOUD_API_KEY=your_google_places_api_key_here
 VITE_GEODB_CITIES_API_KEY=your_geodb_cities_api_key_here
 ```
 
@@ -42,10 +42,11 @@ npm run tsc:watch
 
 ## API キー取得方法
 
-### Geoapify API
-1. [Geoapify](https://www.geoapify.com/) でアカウント作成
-2. API キーを取得
-3. Places API の使用が可能
+### Google Places API
+1. [Google Cloud Console](https://console.cloud.google.com/) でプロジェクト作成
+2. Places API を有効化
+3. API キーを作成・取得
+4. API キーにリファラー制限を設定（セキュリティのため）
 
 ### GeoDB Cities API
 1. [RapidAPI](https://rapidapi.com/) でアカウント作成
@@ -67,7 +68,7 @@ npm run tsc:watch
 ### 3. 環境変数設定
 Netlify dashboard で以下を設定：
 ```
-VITE_GEOAPIFY_API_KEY=your_api_key
+VITE_GOOGLE_CLOUD_API_KEY=your_api_key
 VITE_GEODB_CITIES_API_KEY=your_api_key
 ```
 

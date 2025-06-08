@@ -5,7 +5,7 @@
 - **Build Tool**: Vite
 - **Deployment**: Netlify
 - **CSS**: Vanilla CSS with CSS Variables
-- **APIs**: Geoapify Places API, GeoDB Cities API
+- **APIs**: Google Places API, GeoDB Cities API
 
 ## ファイル構成
 ```
@@ -56,7 +56,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 ```typescript
 // Good
-async function searchNearbyPlaces(lat: number, lon: number): Promise<GeoapifyPlace[]> {
+async function searchNearbyPlaces(lat: number, lon: number): Promise<GooglePlace[]> {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error('API request failed');
@@ -104,7 +104,7 @@ if (button) {
 
 ### 環境変数管理
 ```typescript
-const API_KEY: string = import.meta.env.VITE_GEOAPIFY_API_KEY || "fallback_key";
+const API_KEY: string = import.meta.env.VITE_GOOGLE_CLOUD_API_KEY || "fallback_key";
 ```
 
 ### エラーハンドリング

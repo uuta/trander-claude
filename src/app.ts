@@ -10,15 +10,15 @@ import {
   WorldLocationData,
 } from "./types";
 
-const API_KEY: string = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+const API_KEY: string = import.meta.env.VITE_GOOGLE_CLOUD_API_KEY;
 const GEODB_API_KEY: string = import.meta.env.VITE_GEODB_CITIES_API_KEY;
 
 // Validate API keys are available
 if (!API_KEY) {
-  console.error('VITE_GOOGLE_PLACES_API_KEY environment variable is required');
+  console.error("VITE_GOOGLE_CLOUD_API_KEY environment variable is required");
 }
 if (!GEODB_API_KEY) {
-  console.error('VITE_GEODB_CITIES_API_KEY environment variable is required');
+  console.error("VITE_GEODB_CITIES_API_KEY environment variable is required");
 }
 const SEARCH_RADIUS: number = 200000; // 200km in meters
 const WORLD_SEARCH_RADIUS: number = 5000; // 5km in meters for world search
@@ -441,6 +441,145 @@ function getCurrentPosition(): Promise<Position> {
   });
 }
 
+// Format Google Places types for display
+function formatGoogleTypes(types: string[]): string {
+  const typeMap: { [key: string]: string } = {
+    tourist_attraction: "Tourist Attraction",
+    restaurant: "Restaurant",
+    cafe: "Cafe",
+    bar: "Bar",
+    lodging: "Hotel",
+    museum: "Museum",
+    art_gallery: "Art Gallery",
+    movie_theater: "Cinema",
+    zoo: "Zoo",
+    aquarium: "Aquarium",
+    amusement_park: "Theme Park",
+    casino: "Casino",
+    night_club: "Night Club",
+    shopping_mall: "Shopping Mall",
+    store: "Store",
+    supermarket: "Supermarket",
+    department_store: "Department Store",
+    gym: "Gym",
+    stadium: "Stadium",
+    park: "Park",
+    natural_feature: "Natural Feature",
+    bank: "Bank",
+    hospital: "Hospital",
+    pharmacy: "Pharmacy",
+    post_office: "Post Office",
+    police: "Police",
+    church: "Church",
+    hindu_temple: "Hindu Temple",
+    mosque: "Mosque",
+    synagogue: "Synagogue",
+    school: "School",
+    university: "University",
+    library: "Library",
+    meal_takeaway: "Takeaway",
+    point_of_interest: "Point of Interest",
+  };
+
+  return types
+    .map(
+      (type) =>
+        typeMap[type] ||
+        type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+    )
+    .slice(0, 3) // Show max 3 types
+    .join(", ");
+}
+
+// Convert app categories to Google Places types
+function getGooglePlaceTypes(categories: string[]): string[] {
+  const categoryToType: { [key: string]: string[] } = {
+    accommodation: ["lodging"],
+    "accommodation.hotel": ["lodging"],
+    "accommodation.motel": ["lodging"],
+    "accommodation.apartment": ["lodging"],
+    "accommodation.chalet": ["lodging"],
+    "accommodation.guest_house": ["lodging"],
+    catering: ["restaurant", "cafe", "bar"],
+    "catering.restaurant": ["restaurant"],
+    "catering.cafe": ["cafe"],
+    "catering.bar": ["bar"],
+    "catering.pub": ["bar"],
+    "catering.fast_food": ["meal_takeaway"],
+    "catering.ice_cream": ["cafe"],
+    entertainment: [
+      "museum",
+      "art_gallery",
+      "movie_theater",
+      "zoo",
+      "aquarium",
+      "amusement_park",
+      "casino",
+      "night_club",
+    ],
+    "entertainment.museum": ["museum"],
+    "entertainment.theatre": ["movie_theater"],
+    "entertainment.cinema": ["movie_theater"],
+    "entertainment.zoo": ["zoo"],
+    "entertainment.aquarium": ["aquarium"],
+    "entertainment.theme_park": ["amusement_park"],
+    "entertainment.casino": ["casino"],
+    "entertainment.nightclub": ["night_club"],
+    tourism: ["tourist_attraction"],
+    "tourism.sights": ["tourist_attraction"],
+    "tourism.attraction": ["tourist_attraction"],
+    "tourism.information": ["tourist_attraction"],
+    commercial: ["shopping_mall", "store", "supermarket", "department_store"],
+    "commercial.shopping_mall": ["shopping_mall"],
+    "commercial.supermarket": ["supermarket"],
+    "commercial.marketplace": ["shopping_mall"],
+    "commercial.department_store": ["department_store"],
+    sport: ["gym", "stadium"],
+    "sport.fitness": ["gym"],
+    "sport.swimming": ["gym"],
+    "sport.tennis": ["gym"],
+    "sport.golf": ["gym"],
+    natural: ["park", "natural_feature"],
+    "natural.beach": ["natural_feature"],
+    "natural.park": ["park"],
+    "natural.forest": ["park"],
+    "natural.mountain": ["natural_feature"],
+    "natural.lake": ["natural_feature"],
+    service: ["bank", "hospital", "pharmacy", "post_office", "police"],
+    "service.banking": ["bank"],
+    "service.healthcare": ["hospital"],
+    "service.pharmacy": ["pharmacy"],
+    "service.post": ["post_office"],
+    "service.police": ["police"],
+    religion: ["church", "hindu_temple", "mosque", "synagogue"],
+    "religion.christian": ["church"],
+    "religion.buddhist": ["church"],
+    "religion.hindu": ["hindu_temple"],
+    "religion.muslim": ["mosque"],
+    "religion.jewish": ["synagogue"],
+    education: ["school", "university", "library"],
+    "education.school": ["school"],
+    "education.university": ["university"],
+    "education.college": ["university"],
+    "education.library": ["library"],
+  };
+
+  const types: string[] = [];
+  categories.forEach((cat) => {
+    if (categoryToType[cat]) {
+      types.push(...categoryToType[cat]);
+    }
+  });
+
+  // If no specific types found, use general types
+  if (types.length === 0) {
+    types.push("tourist_attraction", "restaurant", "lodging", "store");
+  }
+
+  // Remove duplicates
+  return [...new Set(types)];
+}
+
 async function searchNearbyPlaces(
   lat: number,
   lon: number,
@@ -448,23 +587,39 @@ async function searchNearbyPlaces(
   radius: number = SEARCH_RADIUS,
 ): Promise<GooglePlace[]> {
   const categories = selectedCategories || getSelectedCategories();
-  const category = Array.isArray(categories)
-    ? categories.join(",")
-    : categories;
+  const types = getGooglePlaceTypes(categories);
 
-  const url = `https://api.geoapify.com/v2/places?categories=${category}&filter=circle:${lon},${lat},${radius}&limit=50&details=contact,rating,price,accessibility,features&apiKey=${API_KEY}`;
+  // Google Places API only supports one type per request, so we'll make multiple requests
+  const allPlaces: GooglePlace[] = [];
 
   try {
-    const response = await fetch(url);
+    // Limit to 3 types to avoid too many API calls
+    for (const type of types.slice(0, 3)) {
+      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=${radius}&type=${type}&key=${API_KEY}`;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("API Error:", errorText);
-      throw new Error("Failed to search for places");
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        continue; // Skip this type and try others
+      }
+
+      const data: GooglePlacesResponse = await response.json();
+
+      if (data.status === "OK" && data.results) {
+        allPlaces.push(...data.results);
+      } else if (data.error_message) {
+        console.error("Google Places API error:", data.error_message);
+      }
     }
 
-    const data: GeoapifyResponse = await response.json();
-    return data.features || [];
+    // Remove duplicates based on place_id
+    const uniquePlaces = Array.from(
+      new Map(allPlaces.map((place) => [place.place_id, place])).values(),
+    );
+
+    return uniquePlaces;
   } catch (error) {
     console.error("Search error:", error);
     throw error;
@@ -478,12 +633,11 @@ function displayLocation(
 ): void {
   currentLocation = place;
 
-  const properties = place.properties;
   const distance = calculateDistance(
     userLat,
     userLon,
-    properties.lat,
-    properties.lon,
+    place.geometry.location.lat,
+    place.geometry.location.lng,
   );
 
   const locationNameEl = document.getElementById(
@@ -499,85 +653,69 @@ function displayLocation(
     "location-details",
   ) as HTMLElement;
 
-  locationNameEl.textContent = properties.name || "Unknown name";
-  locationAddressEl.textContent = formatAddress(properties);
+  locationNameEl.textContent = place.name || "Unknown name";
+  locationAddressEl.textContent =
+    place.vicinity || place.formatted_address || "Address unknown";
   locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from your location`;
 
   const details: string[] = [];
-  
+
   // Basic information
-  if (properties.categories) {
-    details.push(`📍 Category: ${formatCategories(properties.categories)}`);
+  if (place.types && place.types.length > 0) {
+    details.push(`📍 Category: ${formatGoogleTypes(place.types)}`);
   }
-  
-  // Brand/Operator information
-  if (properties.brand) {
-    details.push(`🏪 Brand: ${properties.brand}`);
-  }
-  if (properties.operator && properties.operator !== properties.brand) {
-    details.push(`🏢 Operator: ${properties.operator}`);
-  }
-  
+
   // Contact information
-  if (properties.phone) {
-    details.push(`📞 Phone: <a href="tel:${properties.phone}">${properties.phone}</a>`);
+  if (place.formatted_phone_number) {
+    details.push(
+      `📞 Phone: <a href="tel:${place.formatted_phone_number}">${place.formatted_phone_number}</a>`,
+    );
   }
-  if (properties.email) {
-    details.push(`📧 Email: <a href="mailto:${properties.email}">${properties.email}</a>`);
+  if (place.website) {
+    details.push(
+      `🌐 <a href="${place.website}" target="_blank" rel="noopener">Website</a>`,
+    );
   }
-  if (properties.website) {
-    details.push(`🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`);
-  }
-  
+
   // Rating and pricing
-  if (properties.rating) {
-    const stars = '⭐'.repeat(Math.floor(properties.rating));
-    details.push(`${stars} Rating: ${properties.rating}/5`);
+  if (place.rating) {
+    const stars = "⭐".repeat(Math.floor(place.rating));
+    details.push(`${stars} Rating: ${place.rating}/5`);
   }
-  if (properties.price_level) {
-    details.push(`💰 Price: ${properties.price_level}`);
+  if (place.price_level !== undefined) {
+    const priceSymbol = "$".repeat(place.price_level + 1);
+    details.push(`💰 Price: ${priceSymbol}`);
   }
-  
-  // Cuisine for restaurants
-  if (properties.cuisine) {
-    details.push(`🍽️ Cuisine: ${properties.cuisine}`);
+
+  // Hours
+  if (place.opening_hours) {
+    const status = place.opening_hours.open_now ? "Open now" : "Closed";
+    details.push(`🕒 ${status}`);
   }
-  
-  // Hours and accessibility
-  if (properties.opening_hours) {
-    details.push(`🕒 Hours: ${properties.opening_hours}`);
+
+  // Accessibility
+  if (place.wheelchair_accessible_entrance !== undefined) {
+    const wheelchairIcon = place.wheelchair_accessible_entrance
+      ? "♿✅"
+      : "♿❓";
+    details.push(
+      `${wheelchairIcon} Wheelchair accessible: ${place.wheelchair_accessible_entrance ? "Yes" : "No"}`,
+    );
   }
-  if (properties.wheelchair) {
-    const wheelchairIcon = properties.wheelchair === 'yes' ? '♿✅' : '♿❓';
-    details.push(`${wheelchairIcon} Wheelchair: ${properties.wheelchair}`);
-  }
-  
-  // Features and amenities
-  if (properties.internet_access) {
-    const wifiIcon = properties.internet_access === 'wlan' ? '📶' : '📶❓';
-    details.push(`${wifiIcon} WiFi: ${properties.internet_access}`);
-  }
-  if (properties.outdoor_seating) {
-    const outdoorIcon = properties.outdoor_seating === 'yes' ? '🪑✅' : '🪑❓';
-    details.push(`${outdoorIcon} Outdoor seating: ${properties.outdoor_seating}`);
-  }
-  if (properties.smoking) {
-    const smokingIcon = properties.smoking === 'no' ? '🚭' : '🚬';
-    details.push(`${smokingIcon} Smoking: ${properties.smoking}`);
-  }
-  
+
   // Description
-  if (properties.description) {
-    details.push(`📝 ${properties.description}`);
+  if (place.editorial_summary?.overview) {
+    details.push(`📝 ${place.editorial_summary.overview}`);
   }
-  
+
   locationDetailsEl.innerHTML = details.join("<br>");
 
   // Try to get image from API response first, then fallback to placeholder
   let imageUrl: string;
-  if (properties.image || properties.photo) {
-    imageUrl = properties.image || properties.photo || "";
-  } else if (properties.name) {
+  if (place.photos && place.photos.length > 0) {
+    // Use Google Places Photo API
+    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}&key=${API_KEY}`;
+  } else if (place.name) {
     // Use a more reliable image service
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
   } else {
@@ -597,9 +735,7 @@ function displayLocation(
       "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+";
   };
 
-  const isFavorite = favorites.some(
-    (fav) => fav.place_id === properties.place_id,
-  );
+  const isFavorite = favorites.some((fav) => fav.place_id === place.place_id);
   favoriteBtn.classList.toggle("active", isFavorite);
 
   welcomeMessage.classList.add("hidden");
@@ -612,13 +748,12 @@ function displayWorldLocation(
 ): void {
   currentLocation = place;
 
-  const properties = place.properties;
   const city = worldData.city;
   const distance = calculateDistance(
     city.latitude,
     city.longitude,
-    properties.lat,
-    properties.lon,
+    place.geometry.location.lat,
+    place.geometry.location.lng,
   );
 
   const locationNameEl = document.getElementById(
@@ -634,89 +769,73 @@ function displayWorldLocation(
     "location-details",
   ) as HTMLElement;
 
-  locationNameEl.textContent = properties.name || "Unknown name";
-  locationAddressEl.textContent = formatAddress(properties);
+  locationNameEl.textContent = place.name || "Unknown name";
+  locationAddressEl.textContent =
+    place.vicinity || place.formatted_address || "Address unknown";
   locationDistanceEl.textContent = `About ${distance.toFixed(1)} km from ${city.name}, ${city.country}`;
 
   const details: string[] = [];
-  
+
   // City information
   details.push(`🏙️ City: ${city.name}, ${city.country}`);
   details.push(`👥 Population: ${city.population.toLocaleString()}`);
-  
+
   // Basic information
-  if (properties.categories) {
-    details.push(`📍 Category: ${formatCategories(properties.categories)}`);
+  if (place.types && place.types.length > 0) {
+    details.push(`📍 Category: ${formatGoogleTypes(place.types)}`);
   }
-  
-  // Brand/Operator information
-  if (properties.brand) {
-    details.push(`🏪 Brand: ${properties.brand}`);
-  }
-  if (properties.operator && properties.operator !== properties.brand) {
-    details.push(`🏢 Operator: ${properties.operator}`);
-  }
-  
+
   // Contact information
-  if (properties.phone) {
-    details.push(`📞 Phone: <a href="tel:${properties.phone}">${properties.phone}</a>`);
+  if (place.formatted_phone_number) {
+    details.push(
+      `📞 Phone: <a href="tel:${place.formatted_phone_number}">${place.formatted_phone_number}</a>`,
+    );
   }
-  if (properties.email) {
-    details.push(`📧 Email: <a href="mailto:${properties.email}">${properties.email}</a>`);
+  if (place.website) {
+    details.push(
+      `🌐 <a href="${place.website}" target="_blank" rel="noopener">Website</a>`,
+    );
   }
-  if (properties.website) {
-    details.push(`🌐 <a href="${properties.website}" target="_blank" rel="noopener">Website</a>`);
-  }
-  
+
   // Rating and pricing
-  if (properties.rating) {
-    const stars = '⭐'.repeat(Math.floor(properties.rating));
-    details.push(`${stars} Rating: ${properties.rating}/5`);
+  if (place.rating) {
+    const stars = "⭐".repeat(Math.floor(place.rating));
+    details.push(`${stars} Rating: ${place.rating}/5`);
   }
-  if (properties.price_level) {
-    details.push(`💰 Price: ${properties.price_level}`);
+  if (place.price_level !== undefined) {
+    const priceSymbol = "$".repeat(place.price_level + 1);
+    details.push(`💰 Price: ${priceSymbol}`);
   }
-  
-  // Cuisine for restaurants
-  if (properties.cuisine) {
-    details.push(`🍽️ Cuisine: ${properties.cuisine}`);
+
+  // Hours
+  if (place.opening_hours) {
+    const status = place.opening_hours.open_now ? "Open now" : "Closed";
+    details.push(`🕒 ${status}`);
   }
-  
-  // Hours and accessibility
-  if (properties.opening_hours) {
-    details.push(`🕒 Hours: ${properties.opening_hours}`);
+
+  // Accessibility
+  if (place.wheelchair_accessible_entrance !== undefined) {
+    const wheelchairIcon = place.wheelchair_accessible_entrance
+      ? "♿✅"
+      : "♿❓";
+    details.push(
+      `${wheelchairIcon} Wheelchair accessible: ${place.wheelchair_accessible_entrance ? "Yes" : "No"}`,
+    );
   }
-  if (properties.wheelchair) {
-    const wheelchairIcon = properties.wheelchair === 'yes' ? '♿✅' : '♿❓';
-    details.push(`${wheelchairIcon} Wheelchair: ${properties.wheelchair}`);
-  }
-  
-  // Features and amenities
-  if (properties.internet_access) {
-    const wifiIcon = properties.internet_access === 'wlan' ? '📶' : '📶❓';
-    details.push(`${wifiIcon} WiFi: ${properties.internet_access}`);
-  }
-  if (properties.outdoor_seating) {
-    const outdoorIcon = properties.outdoor_seating === 'yes' ? '🪑✅' : '🪑❓';
-    details.push(`${outdoorIcon} Outdoor seating: ${properties.outdoor_seating}`);
-  }
-  if (properties.smoking) {
-    const smokingIcon = properties.smoking === 'no' ? '🚭' : '🚬';
-    details.push(`${smokingIcon} Smoking: ${properties.smoking}`);
-  }
-  
+
   // Description
-  if (properties.description) {
-    details.push(`📝 ${properties.description}`);
+  if (place.editorial_summary?.overview) {
+    details.push(`📝 ${place.editorial_summary.overview}`);
   }
-  
+
   locationDetailsEl.innerHTML = details.join("<br>");
 
   // Handle image display (same as local search)
   let imageUrl: string;
-  if (properties.image || properties.photo) {
-    imageUrl = properties.image || properties.photo || "";
-  } else if (properties.name) {
+  if (place.photos && place.photos.length > 0) {
+    // Use Google Places Photo API
+    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}&key=${API_KEY}`;
+  } else if (place.name) {
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
   } else {
     imageUrl =
@@ -733,38 +852,11 @@ function displayWorldLocation(
       "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBBdmFpbGFibGU8L3RleHQ+PC9zdmc+";
   };
 
-  const isFavorite = favorites.some(
-    (fav) => fav.place_id === properties.place_id,
-  );
+  const isFavorite = favorites.some((fav) => fav.place_id === place.place_id);
   favoriteBtn.classList.toggle("active", isFavorite);
 
   welcomeMessage.classList.add("hidden");
   locationDisplay.classList.remove("hidden");
-}
-
-function formatAddress(properties: any): string {
-  const parts: string[] = [];
-  if (properties.street) parts.push(properties.street);
-  if (properties.city) parts.push(properties.city);
-  if (properties.state) parts.push(properties.state);
-  if (properties.country) parts.push(properties.country);
-  return parts.join(", ") || "Address unknown";
-}
-
-function formatCategories(categories: string[]): string {
-  const categoryMap: { [key: string]: string } = {
-    tourism: "Tourism",
-    entertainment: "Entertainment",
-    catering: "Dining",
-    "commercial.shopping": "Shopping",
-  };
-
-  return categories
-    .map((cat) => {
-      const mainCategory = cat.split(".")[0];
-      return categoryMap[mainCategory] || cat;
-    })
-    .join(", ");
 }
 
 function calculateDistance(
@@ -789,16 +881,16 @@ function calculateDistance(
 function toggleFavorite(): void {
   if (!currentLocation) return;
 
-  const properties = currentLocation.properties;
+  const place = currentLocation; // For TypeScript null check
   const favoriteIndex = favorites.findIndex(
-    (fav) => fav.place_id === properties.place_id,
+    (fav) => fav.place_id === place.place_id,
   );
 
   if (favoriteIndex === -1) {
     favorites.push({
-      place_id: properties.place_id,
-      name: properties.name || "Unknown name",
-      address: formatAddress(properties),
+      place_id: place.place_id,
+      name: place.name || "Unknown name",
+      address: place.vicinity || place.formatted_address || "Address unknown",
     });
     favoriteBtn.classList.add("active");
   } else {
@@ -830,8 +922,10 @@ function updateFavoritesList(): void {
 function shareLocation(): void {
   if (!currentLocation) return;
 
-  const properties = currentLocation.properties;
-  const text = `I found ${properties.name || "an amazing place"}!\n${formatAddress(properties)}`;
+  const place = currentLocation; // For TypeScript null check
+  const address =
+    place.vicinity || place.formatted_address || "Address unknown";
+  const text = `I found ${place.name || "an amazing place"}!\n${address}`;
 
   if (navigator.share) {
     navigator
@@ -1211,4 +1305,3 @@ function getMockCity(countryCode: string): GeoDBCity {
 }
 
 init();
-

@@ -13,7 +13,7 @@
 
 ## 🛠️ 主要技術
 - **TypeScript** + **Vite** + **Netlify**
-- **APIs**: Geoapify Places API, GeoDB Cities API
+- **APIs**: Google Places API, GeoDB Cities API
 - **UI**: ダークモード、ピンク・グリーンカラーテーマ
 
 ## 📦 主要コマンド
@@ -24,7 +24,7 @@ npm start        # レガシー開発環境
 ```
 
 ## 🔧 開発時の注意点
-- 環境変数 `VITE_GEOAPIFY_API_KEY`, `VITE_GEODB_CITIES_API_KEY` が必要
+- 環境変数 `VITE_GOOGLE_CLOUD_API_KEY`, `VITE_GEODB_CITIES_API_KEY` が必要
 - 位置情報拒否時は東京座標をフォールバック
 - TypeScript型安全性を重視
 - 地図表示なし（テキスト・画像のみ）
