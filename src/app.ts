@@ -10,12 +10,12 @@ import {
   WorldLocationData,
 } from "./types";
 
-const API_KEY: string = import.meta.env.VITE_GEOAPIFY_API_KEY;
+const API_KEY: string = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 const GEODB_API_KEY: string = import.meta.env.VITE_GEODB_CITIES_API_KEY;
 
 // Validate API keys are available
 if (!API_KEY) {
-  console.error('VITE_GEOAPIFY_API_KEY environment variable is required');
+  console.error('VITE_GOOGLE_PLACES_API_KEY environment variable is required');
 }
 if (!GEODB_API_KEY) {
   console.error('VITE_GEODB_CITIES_API_KEY environment variable is required');

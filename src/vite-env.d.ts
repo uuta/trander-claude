@@ -1,10 +1,11 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_GEOAPIFY_API_KEY: string
-  readonly VITE_GEODB_CITIES_API_KEY: string
-}
+type ImportMetaEnv = {
+  readonly VITE_GOOGLE_PLACES_API_KEY: string;
+  readonly VITE_GEODB_CITIES_API_KEY: string;
+};
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+type ImportMeta = {
+  readonly env: ImportMetaEnv;
+};
+
