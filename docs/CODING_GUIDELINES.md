@@ -124,6 +124,19 @@ try {
 - LocalStorage で永続化
 - 型安全な状態更新
 
+## API統合パターン
+
+### CORS対応
+- ブラウザから直接呼び出せないAPI（Google Places API等）の場合：
+  1. **開発環境**: サーバープロキシを実装
+  2. **本番環境**: Netlify Functionsを使用
+  3. **代替案**: 対応するJavaScript SDKの使用を検討
+
+### プロキシ実装の優先順位
+1. Netlify Functions（本番とdev/prodパリティ）
+2. 開発サーバーのプロキシ（迅速な開発用）
+3. JavaScript SDK（APIキーの露出を許容する場合）
+
 ## ビルド・デプロイ
 
 ### 開発環境
