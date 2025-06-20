@@ -53,9 +53,10 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 - 単一責任の原則
 - 純粋関数を心がける
 - async/await でのエラーハンドリング
+- 不要な `else` を避ける（早期リターンやガード句を使用）
 
 ```typescript
-// Good
+// Good - Early return pattern
 async function searchNearbyPlaces(lat: number, lon: number): Promise<GooglePlace[]> {
   try {
     const response = await fetch(url);
@@ -64,6 +65,31 @@ async function searchNearbyPlaces(lat: number, lon: number): Promise<GooglePlace
   } catch (error) {
     console.error('Search error:', error);
     throw error;
+  }
+}
+
+// Good - Guard clauses instead of nested else
+function validateUser(user: User): boolean {
+  if (!user) return false;
+  if (!user.email) return false;
+  if (!user.name) return false;
+  return true;
+}
+
+// Bad - Avoid tedious else chains
+function validateUserBad(user: User): boolean {
+  if (user) {
+    if (user.email) {
+      if (user.name) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else {
+    return false;
   }
 }
 ```
@@ -141,14 +167,14 @@ try {
 
 ### 開発環境
 ```bash
-npm run dev          # Vite開発サーバー
-npm start           # TypeScript + Python サーバー（レガシー）
+yarn dev            # Vite開発サーバー
+yarn start          # TypeScript + Python サーバー（レガシー）
 ```
 
 ### 本番ビルド
 ```bash
-npm run build       # Vite本番ビルド
-npm run preview     # ビルド結果のプレビュー
+yarn build          # Vite本番ビルド
+yarn preview        # ビルド結果のプレビュー
 ```
 
 ### Netlify設定

@@ -4,7 +4,7 @@
 
 ### 1. 依存関係のインストール
 ```bash
-npm install
+yarn install
 ```
 
 ### 2. 環境変数の設定
@@ -19,25 +19,25 @@ VITE_GEODB_CITIES_API_KEY=your_geodb_cities_api_key_here
 ### 開発サーバー起動
 ```bash
 # Vite開発サーバー（推奨）
-npm run dev
+yarn dev
 
 # レガシー: TypeScript + Python サーバー
-npm start
+yarn start
 ```
 
 ### ビルド関連
 ```bash
 # 本番ビルド
-npm run build
+yarn build
 
 # ビルド結果のプレビュー
-npm run preview
+yarn preview
 
 # TypeScript コンパイルのみ
-npm run tsc
+yarn tsc
 
 # TypeScript 監視モード
-npm run tsc:watch
+yarn tsc:watch
 ```
 
 ## API キー取得方法
@@ -61,7 +61,7 @@ npm run tsc:watch
 2. GitHub リポジトリと連携
 
 ### 2. ビルド設定
-- **Build command**: `npm run build`
+- **Build command**: `yarn build`
 - **Publish directory**: `dist`
 - **Node version**: 18
 
@@ -87,17 +87,17 @@ VITE_GEODB_CITIES_API_KEY=your_api_key
 ### ビルドエラー
 ```bash
 # node_modules をクリア
-rm -rf node_modules package-lock.json
-npm install
+rm -rf node_modules yarn.lock
+yarn install
 
 # TypeScript エラーチェック
-npm run tsc
+yarn tsc
 ```
 
 ### 開発サーバーエラー
 ```bash
 # ポート競合の場合
-npm run dev -- --port 3001
+yarn dev --port 3001
 
 # キャッシュクリア
 rm -rf .vite node_modules/.vite
@@ -120,21 +120,21 @@ rm -rf .vite node_modules/.vite
 ## パフォーマンス確認
 ```bash
 # バンドルサイズ分析
-npm run build
-npx vite-bundle-analyzer dist
+yarn build
+yarn dlx vite-bundle-analyzer dist
 
 # Lighthouse監査
-npm run preview
+yarn preview
 # DevTools > Lighthouse で分析
 ```
 
 ## ファイル監視・自動リロード
 ```bash
 # Vite で自動リロード
-npm run dev
+yarn dev
 
 # TypeScript ファイル監視
-npm run tsc:watch
+yarn tsc:watch
 ```
 
 ## デバッグのコツ
