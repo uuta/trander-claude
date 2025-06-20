@@ -3,10 +3,10 @@
 このプロジェクトは以下の構成で管理されています：
 
 ## 📋 プロジェクト設計書
-- **[PROJECT_REQUIREMENTS.md](./docs/PROJECT_REQUIREMENTS.md)** - ビジネス要件・機能仕様
-- **[CODING_GUIDELINES.md](./docs/CODING_GUIDELINES.md)** - 開発標準・コーディング規約  
-- **[DEVELOPMENT_SETUP.md](./docs/DEVELOPMENT_SETUP.md)** - 開発環境構築・コマンド集
-- **[LLM_GUIDELINES.md](./docs/LLM_GUIDELINES.md)** - AI アシスタント向けガイドライン
+@docs/PROJECT_REQUIREMENTS.md
+@docs/CODING_GUIDELINES.md
+@docs/DEVELOPMENT_SETUP.md
+@docs/LLM_GUIDELINES.md
 
 ## 🎯 プロジェクト概要
 ユーザーの現在地から200km以内、または世界中のランダムな場所を発見できるロケーション探索アプリケーション
