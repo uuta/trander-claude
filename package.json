@@ -11,10 +11,11 @@
     "tsc": "tsc",
     "tsc:watch": "tsc --watch",
     "server": "python3 server.py",
-    "start": "npm run tsc:watch & npm run server",
-    "start:vite": "npm run dev"
+    "start": "yarn tsc:watch & yarn server",
+    "start:vite": "yarn dev"
   },
   "devDependencies": {
+    "@netlify/functions": "^4.1.6",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
     "vite": "^5.4.19"
