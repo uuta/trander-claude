@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import http.server
-import ssl
+
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
