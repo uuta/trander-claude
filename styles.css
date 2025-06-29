@@ -132,8 +132,9 @@ h1 {
 }
 
 .action-buttons {
-    display: flex;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
 
 .action-btn {
@@ -173,6 +174,28 @@ h1 {
 
 #share-btn:hover {
     background: #334155;
+}
+
+#maps-btn {
+    background: #1e293b;
+    color: #60a5fa;
+    border: 2px solid #60a5fa;
+}
+
+#maps-btn:hover {
+    background: #60a5fa;
+    color: white;
+}
+
+#streetview-btn {
+    background: #1e293b;
+    color: #4ade80;
+    border: 2px solid #4ade80;
+}
+
+#streetview-btn:hover {
+    background: #4ade80;
+    color: white;
 }
 
 .icon {

@@ -62,6 +62,8 @@ const favoriteBtn = document.getElementById(
   "favorite-btn",
 ) as HTMLButtonElement;
 const shareBtn = document.getElementById("share-btn") as HTMLButtonElement;
+const mapsBtn = document.getElementById("maps-btn") as HTMLButtonElement;
+const streetviewBtn = document.getElementById("streetview-btn") as HTMLButtonElement;
 const favoritesList = document.getElementById("favorites-list") as HTMLElement;
 const favoritesItems = document.getElementById(
   "favorites-items",
@@ -70,6 +72,8 @@ const favoritesItems = document.getElementById(
 discoverBtn.addEventListener("click", handleDiscoverClick);
 favoriteBtn.addEventListener("click", toggleFavorite);
 shareBtn.addEventListener("click", shareLocation);
+mapsBtn.addEventListener("click", openGoogleMaps);
+streetviewBtn.addEventListener("click", openStreetView);
 countryInput.addEventListener("input", handleCountryInput);
 countryInput.addEventListener("focus", handleCountryFocus);
 countryInput.addEventListener("blur", handleCountryBlur);
@@ -595,7 +599,7 @@ async function searchNearbyPlaces(
   try {
     // Limit to 3 types to avoid too many API calls
     for (const type of types.slice(0, 3)) {
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=${radius}&type=${type}&key=${API_KEY}`;
+      const url = `/api/places/nearby?location=${lat},${lon}&radius=${radius}&type=${type}`;
 
       const response = await fetch(url);
 
@@ -714,7 +718,7 @@ function displayLocation(
   let imageUrl: string;
   if (place.photos && place.photos.length > 0) {
     // Use Google Places Photo API
-    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}&key=${API_KEY}`;
+    imageUrl = `/api/places/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}`;
   } else if (place.name) {
     // Use a more reliable image service
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
@@ -834,7 +838,7 @@ function displayWorldLocation(
   let imageUrl: string;
   if (place.photos && place.photos.length > 0) {
     // Use Google Places Photo API
-    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}&key=${API_KEY}`;
+    imageUrl = `/api/places/photo?maxwidth=600&photo_reference=${place.photos[0].photo_reference}`;
   } else if (place.name) {
     imageUrl = `https://picsum.photos/600/400?random=${Date.now()}`;
   } else {
@@ -948,6 +952,33 @@ function shareLocation(): void {
 function showError(message: string): void {
   errorMessage.textContent = message;
   errorMessage.classList.remove("hidden");
+}
+
+function openGoogleMaps(): void {
+  if (!currentLocation) return;
+
+  const place = currentLocation;
+  const lat = place.geometry.location.lat;
+  const lng = place.geometry.location.lng;
+  const placeId = place.place_id;
+  
+  // Use place_id for more accurate results
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name || '')}&query_place_id=${placeId}`;
+  
+  window.open(mapsUrl, '_blank');
+}
+
+function openStreetView(): void {
+  if (!currentLocation) return;
+
+  const place = currentLocation;
+  const lat = place.geometry.location.lat;
+  const lng = place.geometry.location.lng;
+  
+  // Open Street View at the location coordinates
+  const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+  
+  window.open(streetViewUrl, '_blank');
 }
 
 async function getLocationByIP(): Promise<{ lat: number; lon: number }> {
@@ -1141,20 +1172,10 @@ const POPULAR_COUNTRIES: Country[] = [
 async function getRandomCityFromCountry(
   countryCode: string,
 ): Promise<GeoDBCity> {
-  const url = `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=${countryCode}&minPopulation=100000&limit=10`;
-
-  const headers = {
-    "x-rapidapi-key": GEODB_API_KEY,
-    "x-rapidapi-host": "wft-geo-db.p.rapidapi.com",
-    Accept: "application/json",
-    "User-Agent": "Trander-App/1.0",
-  };
+  const url = `/api/geodb/cities?countryIds=${countryCode}&minPopulation=100000&limit=10`;
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers,
-    });
+    const response = await fetch(url);
 
     if (!response.ok) {
       if (response.status === 403) {
